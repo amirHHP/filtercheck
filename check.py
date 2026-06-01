@@ -38,13 +38,23 @@ if sys.platform == 'win32':
         # Fallback to no colors if it fails
         GREEN = RED = YELLOW = BLUE = MAGENTA = CYAN = RESET = BOLD = ""
 
-# GitHub free-proxy-list raw URLs
+# GitHub raw URLs (including public proxy list and V2Ray subscription lists)
 LIST_URLS = {
     'all': 'https://raw.githubusercontent.com/iplocate/free-proxy-list/main/all-proxies.txt',
     'http': 'https://raw.githubusercontent.com/iplocate/free-proxy-list/main/protocols/http.txt',
     'https': 'https://raw.githubusercontent.com/iplocate/free-proxy-list/main/protocols/https.txt',
     'socks4': 'https://raw.githubusercontent.com/iplocate/free-proxy-list/main/protocols/socks4.txt',
     'socks5': 'https://raw.githubusercontent.com/iplocate/free-proxy-list/main/protocols/socks5.txt',
+    
+    # User-added sources
+    'ebrasha_v2ray': 'https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/main/V2Ray-Config-By-EbraSha-All-Type.txt',
+    'barry_far_v2ray': 'https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Sub1.txt',
+    'roosterkid_socks5': 'https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS5_RAW.txt',
+    'roosterkid_https': 'https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS_RAW.txt',
+    'v2ray_sub': 'https://raw.githubusercontent.com/V2RAYCONFIGSPOOL/V2RAY_SUB/main/v2ray_configs_no1.txt',
+    'slipnet_sub': 'https://raw.githubusercontent.com/V2RAYCONFIGSPOOL/SLIPNET_SUB/main/slipnet_no1.txt',
+    'yawstar_proxy_hunter': 'https://raw.githubusercontent.com/YawStar/Proxy-Hunter/main/configs/proxy_configs.txt',
+    '3inker_v2ray': 'https://raw.githubusercontent.com/3inker/v2ray-subscription/main/subs/all_not_ru.txt',
 }
 
 # User-provided VPN API endpoints list
@@ -338,6 +348,19 @@ def check_http_connect(proxy_ip, proxy_port, host, port, path, use_ssl, timeout)
         except:
             pass
 
+def test_tcp_port(ip, port, timeout=3):
+    start = time.time()
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(timeout)
+        s.connect((ip, port))
+        latency = (time.time() - start) * 1000
+        return True, latency, "HTTP/1.1 200 OK\r\n\r\nTCP Port Connection Succeeded"
+    except Exception as e:
+        return False, 0, str(e)
+    finally:
+        s.close()
+
 def test_proxy(proxy, target_url, timeout=5):
     protocol = proxy['protocol'].lower()
     ip = proxy['ip']
@@ -356,6 +379,8 @@ def test_proxy(proxy, target_url, timeout=5):
             return check_http(ip, port, host, target_port, path, timeout)
     elif protocol == 'https':
         return check_http_connect(ip, port, host, target_port, path, use_ssl, timeout)
+    elif protocol in ('vmess', 'vless', 'ss', 'trojan', 'tuic', 'hysteria', 'hysteria2'):
+        return test_tcp_port(ip, port, timeout)
         
     return False, 0, f"Unsupported protocol: {protocol}"
 
@@ -364,7 +389,35 @@ def parse_proxy_line(line, default_protocol=None):
     if not line or line.startswith('#'):
         return None
     try:
-        if "://" in line:
+        if line.startswith('vmess://'):
+            b64_data = line[8:]
+            b64_data += '=' * (-len(b64_data) % 4)
+            decoded = base64.b64decode(b64_data).decode('utf-8', errors='ignore')
+            data = json.loads(decoded)
+            host = data.get('add')
+            port = data.get('port')
+            if host and port:
+                return {'protocol': 'vmess', 'ip': host, 'port': int(port)}
+        elif any(line.startswith(p) for p in ['vless://', 'ss://', 'trojan://', 'tuic://', 'hysteria2://', 'hysteria://']):
+            parsed = urlparse(line)
+            host = parsed.hostname
+            port = parsed.port
+            if host and port:
+                return {'protocol': parsed.scheme.lower(), 'ip': host, 'port': int(port)}
+            # Fallback to basic parsing for custom formats
+            protocol, rest = line.split("://", 1)
+            if '#' in rest:
+                rest = rest.split('#', 1)[0]
+            if '@' in rest:
+                rest = rest.split('@', 1)[1]
+            if ':' in rest:
+                ip, port = rest.split(':', 1)
+                if '/' in port:
+                    port = port.split('/', 1)[0]
+                if '?' in port:
+                    port = port.split('?', 1)[0]
+                return {'protocol': protocol.lower(), 'ip': ip, 'port': int(port)}
+        elif "://" in line:
             protocol, rest = line.split("://", 1)
             if ":" in rest:
                 ip, port = rest.split(":", 1)
@@ -724,11 +777,22 @@ def download_proxies(choice):
             headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'}
         )
         with urllib.request.urlopen(req, timeout=10) as response:
-            content = response.read().decode('utf-8')
+            content_bytes = response.read()
+            
+        try:
+            # Check if content is base64 encoded
+            decoded_bytes = base64.b64decode(content_bytes)
+            decoded_text = decoded_bytes.decode('utf-8', errors='ignore')
+            if any(marker in decoded_text for marker in ['vmess://', 'vless://', 'ss://', 'trojan://', 'socks5://', 'socks4://', 'http://', 'https://', ':']):
+                content = decoded_text
+            else:
+                content = content_bytes.decode('utf-8', errors='ignore')
+        except Exception:
+            content = content_bytes.decode('utf-8', errors='ignore')
             
         raw_lines = content.splitlines()
         proxies = []
-        default_protocol = None if choice == 'all' else choice
+        default_protocol = None if choice in ('all', 'roosterkid_socks5', 'roosterkid_https', 'ebrasha_v2ray', 'barry_far_v2ray', 'v2ray_sub', 'slipnet_sub', 'yawstar_proxy_hunter', '3inker_v2ray') else choice
         
         for line in raw_lines:
             p = parse_proxy_line(line, default_protocol)
@@ -762,12 +826,30 @@ def draw_progress_bar(checked, total, working):
 
 def proxy_worker(proxy, target_url, timeout, all_proxies_to_test):
     global checked_count, working_count
-    success, latency, resp_str = test_proxy(proxy, target_url, timeout)
     
+    latencies = []
+    successes = 0
+    resp_str = ""
+    
+    # Run 3 consecutive probes to test stability
+    for i in range(3):
+        success, latency, r_str = test_proxy(proxy, target_url, timeout)
+        if not success:
+            break
+        successes += 1
+        latencies.append(latency)
+        resp_str = r_str
+        if i < 2:
+            time.sleep(0.15)  # Short pause between probes to check stability
+            
     with stats_lock:
         checked_count += 1
-        if success:
+        if successes == 3:  # Only accept 100% stable proxies
             working_count += 1
+            avg_latency = sum(latencies) / len(latencies)
+            # Jitter: Standard deviation of latencies
+            jitter = (sum((l - avg_latency) ** 2 for l in latencies) / len(latencies)) ** 0.5
+            
             status_line = get_http_status(resp_str)
             country = "Unknown"
             isp = "Unknown"
@@ -785,7 +867,8 @@ def proxy_worker(proxy, target_url, timeout, all_proxies_to_test):
                 'protocol': proxy['protocol'],
                 'ip': proxy['ip'],
                 'port': proxy['port'],
-                'latency': latency,
+                'latency': avg_latency,
+                'jitter': jitter,
                 'status': status_line,
                 'country': country,
                 'isp': isp
@@ -795,7 +878,7 @@ def proxy_worker(proxy, target_url, timeout, all_proxies_to_test):
             sys.stdout.write("\r" + " " * 80 + "\r")
             print(
                 f"{GREEN}[✓] {proxy['protocol'].upper()} {proxy['ip']}:{proxy['port']} "
-                f"({country}) - {latency:.1f}ms | {status_line}{RESET}"
+                f"({country}) - Avg: {avg_latency:.1f}ms, Jitter: {jitter:.1f}ms | {status_line}{RESET}"
             )
             
         draw_progress_bar(checked_count, len(all_proxies_to_test), working_count)
@@ -816,7 +899,7 @@ def run_proxy_check(proxy_type='all', target_url='http://ip-api.com/json', threa
     print(f"│               TESTING PUBLIC PROXIES         │")
     print(f"└──────────────────────────────────────────────┘{RESET}")
     print(f"Target endpoint: {BOLD}{target_url}{RESET}")
-    print(f"Concurrency:     {BOLD}{threads} threads{RESET}")
+    print(f"Concurrency:     {BOLD}{threads} threads (Multi-Probe: 3 checks per proxy){RESET}")
     print(f"Timeout:         {BOLD}{timeout}s{RESET}\n")
     
     start_time = time.time()
@@ -839,19 +922,20 @@ def run_proxy_check(proxy_type='all', target_url='http://ip-api.com/json', threa
     print(f"│                 PROXY SUMMARY                │")
     print(f"└──────────────────────────────────────────────┘{RESET}")
     print(f"Total Proxies Checked: {checked_count}")
-    print(f"Working Proxies:       {GREEN}{working_count}{RESET}")
+    print(f"Working Stable Proxies: {GREEN}{working_count}{RESET} (100% Success Rate)")
     print(f"Total Time Elapsed:    {elapsed_total:.2f} seconds")
     
     if working_proxies:
-        working_proxies.sort(key=lambda x: x['latency'])
+        # Sort by total cost: average latency + jitter (penalizing highly unstable latency)
+        working_proxies.sort(key=lambda x: x['latency'] + x['jitter'])
         
-        print(f"\n{BOLD}{CYAN}Top 15 Fastest Working Proxies:{RESET}")
-        print(f"{BOLD}{'Protocol':<10} {'IP Address':<18} {'Port':<8} {'Latency':<10} {'Country':<15} {'ISP':<20}{RESET}")
-        print("-" * 85)
+        print(f"\n{BOLD}{CYAN}Top 15 Most Stable & Fastest Working Proxies (3/3 Probes):{RESET}")
+        print(f"{BOLD}{'Protocol':<10} {'IP Address':<18} {'Port':<8} {'Avg Latency':<12} {'Jitter':<10} {'Country':<15} {'ISP':<20}{RESET}")
+        print("-" * 97)
         for wp in working_proxies[:15]:
             country = wp['country'][:13] if len(wp['country']) > 13 else wp['country']
             isp = wp['isp'][:18] if len(wp['isp']) > 18 else wp['isp']
-            print(f"{wp['protocol'].upper():<10} {wp['ip']:<18} {wp['port']:<8} {wp['latency']:>6.1f}ms   {country:<15} {isp:<20}")
+            print(f"{wp['protocol'].upper():<10} {wp['ip']:<18} {wp['port']:<8} {wp['latency']:>6.1f}ms      {wp['jitter']:>6.1f}ms    {country:<15} {isp:<20}")
             
         try:
             with open(output_file, 'w') as f:
@@ -1076,7 +1160,7 @@ def run_vpngate_check(threads=50, timeout=3, max_check=120, local_file=None):
 def main():
     parser = argparse.ArgumentParser(description="Unified Proxy & VPN Connectivity Checker")
     parser.add_argument('--mode', choices=['all', 'vpn', 'vpngate', 'proxy'], default=None, help="Check mode (all, vpn, vpngate, proxy)")
-    parser.add_argument('--type', choices=['all', 'http', 'https', 'socks4', 'socks5'], default='all', help="Proxy list type (default: all)")
+    parser.add_argument('--type', choices=list(LIST_URLS.keys()), default='all', help=f"Proxy list type (choices: {', '.join(LIST_URLS.keys())})")
     parser.add_argument('--target', default='http://ip-api.com/json', help="Target URL for proxy checks (default: http://ip-api.com/json)")
     parser.add_argument('--threads', type=int, default=80, help="Concurrency threads for proxy checks (default: 80)")
     parser.add_argument('--timeout', type=int, default=4, help="Timeout in seconds for proxy checks (default: 4)")
