@@ -38,6 +38,15 @@ if sys.platform == 'win32':
         # Fallback to no colors if it fails
         GREEN = RED = YELLOW = BLUE = MAGENTA = CYAN = RESET = BOLD = ""
 
+def create_ssl_context():
+    try:
+        return ssl._create_unverified_context()
+    except AttributeError:
+        context = ssl.create_default_context()
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+        return context
+
 # GitHub raw URLs (including public proxy list and V2Ray subscription lists)
 LIST_URLS = {
     'all': 'https://raw.githubusercontent.com/iplocate/free-proxy-list/main/all-proxies.txt',
@@ -186,7 +195,7 @@ def check_socks5(proxy_ip, proxy_port, host, port, path, use_ssl, timeout):
             return False, 0, "SOCKS5 connection rejected"
             
         if use_ssl:
-            context = ssl.create_default_context()
+            context = create_ssl_context()
             s = context.wrap_socket(s, server_hostname=host)
             
         req = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)\r\nConnection: close\r\n\r\n"
@@ -234,7 +243,7 @@ def check_socks4(proxy_ip, proxy_port, host, port, path, use_ssl, timeout):
             return False, 0, "SOCKS4 connection rejected"
             
         if use_ssl:
-            context = ssl.create_default_context()
+            context = create_ssl_context()
             s = context.wrap_socket(s, server_hostname=host)
             
         req = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)\r\nConnection: close\r\n\r\n"
@@ -319,7 +328,7 @@ def check_http_connect(proxy_ip, proxy_port, host, port, path, use_ssl, timeout)
             return False, 0, "CONNECT tunnel denied"
             
         if use_ssl:
-            context = ssl.create_default_context()
+            context = create_ssl_context()
             s = context.wrap_socket(s, server_hostname=host)
             
         req = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)\r\nConnection: close\r\n\r\n"
@@ -368,21 +377,67 @@ def test_proxy(proxy, target_url, timeout=5):
     
     host, target_port, path, use_ssl = parse_target_url(target_url)
     
+    success = False
+    latency = 0
+    resp = ""
+    
     if protocol == 'socks5':
-        return check_socks5(ip, port, host, target_port, path, use_ssl, timeout)
+        success, latency, resp = check_socks5(ip, port, host, target_port, path, use_ssl, timeout)
     elif protocol == 'socks4':
-        return check_socks4(ip, port, host, target_port, path, use_ssl, timeout)
+        success, latency, resp = check_socks4(ip, port, host, target_port, path, use_ssl, timeout)
     elif protocol == 'http':
         if use_ssl:
-            return check_http_connect(ip, port, host, target_port, path, use_ssl, timeout)
+            success, latency, resp = check_http_connect(ip, port, host, target_port, path, use_ssl, timeout)
         else:
-            return check_http(ip, port, host, target_port, path, timeout)
+            success, latency, resp = check_http(ip, port, host, target_port, path, timeout)
     elif protocol == 'https':
-        return check_http_connect(ip, port, host, target_port, path, use_ssl, timeout)
+        success, latency, resp = check_http_connect(ip, port, host, target_port, path, use_ssl, timeout)
     elif protocol in ('vmess', 'vless', 'ss', 'trojan', 'tuic', 'hysteria', 'hysteria2'):
         return test_tcp_port(ip, port, timeout)
+    else:
+        return False, 0, f"Unsupported protocol: {protocol}"
+
+    if success:
+        # Parse status code
+        try:
+            status_line = get_http_status(resp)
+            status_parts = status_line.split()
+            if len(status_parts) >= 2:
+                status_code = int(status_parts[1])
+            else:
+                status_code = 0
+        except:
+            status_code = 0
+            
+        if status_code not in (200, 204, 301, 302, 307, 308):
+            return False, 0, f"HTTP Error Status: {status_line}"
+            
+        if "ip-api.com" in target_url:
+            body = get_http_body(resp)
+            try:
+                data = json.loads(body)
+                if not isinstance(data, dict) or ('query' not in data and 'status' not in data):
+                    return False, 0, "Invalid ip-api response format"
+            except Exception as e:
+                return False, 0, f"Failed to parse JSON response: {str(e)}"
+                
+        if "ipify.org" in target_url:
+            body = get_http_body(resp)
+            try:
+                data = json.loads(body)
+                if not isinstance(data, dict) or 'ip' not in data:
+                    return False, 0, "Invalid ipify response format"
+            except Exception as e:
+                return False, 0, f"Failed to parse JSON response: {str(e)}"
+                
+        if "cloudflare.com" in target_url or "1.1.1.1" in target_url:
+            body = get_http_body(resp)
+            if "visit_scheme=" not in body or "ip=" not in body:
+                return False, 0, "Invalid Cloudflare trace response format"
+                
+        return True, latency, resp
         
-    return False, 0, f"Unsupported protocol: {protocol}"
+    return False, 0, resp
 
 def parse_proxy_line(line, default_protocol=None):
     line = line.strip()
@@ -512,7 +567,7 @@ def socket_get_via_proxy(proxy, url, timeout=6):
                 return None
         
         if use_ssl:
-            context = ssl.create_default_context()
+            context = create_ssl_context()
             s = context.wrap_socket(s, server_hostname=host)
             
         req = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)\r\nConnection: close\r\n\r\n"
@@ -553,7 +608,7 @@ def socket_get_direct(url, timeout=6):
     try:
         s.connect((host, port))
         if use_ssl:
-            context = ssl.create_default_context()
+            context = create_ssl_context()
             s = context.wrap_socket(s, server_hostname=host)
             
         req = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)\r\nConnection: close\r\n\r\n"
@@ -854,6 +909,7 @@ def proxy_worker(proxy, target_url, timeout, all_proxies_to_test):
             country = "Unknown"
             isp = "Unknown"
             
+            exit_ip = proxy['ip']
             if "ip-api.com" in target_url:
                 body = get_http_body(resp_str)
                 try:
@@ -862,10 +918,17 @@ def proxy_worker(proxy, target_url, timeout, all_proxies_to_test):
                     isp = data.get('isp', 'Unknown')
                 except:
                     pass
+            elif "cloudflare.com" in target_url or "1.1.1.1" in target_url:
+                body = get_http_body(resp_str)
+                for line in body.splitlines():
+                    if line.startswith("ip="):
+                        exit_ip = line.split("=", 1)[1].strip()
+                        break
             
             result = {
                 'protocol': proxy['protocol'],
                 'ip': proxy['ip'],
+                'exit_ip': exit_ip,
                 'port': proxy['port'],
                 'latency': avg_latency,
                 'jitter': jitter,
@@ -883,7 +946,22 @@ def proxy_worker(proxy, target_url, timeout, all_proxies_to_test):
             
         draw_progress_bar(checked_count, len(all_proxies_to_test), working_count)
 
-def run_proxy_check(proxy_type='all', target_url='http://ip-api.com/json', threads=80, timeout=4, output_file='working_proxies.txt'):
+def get_ip_geocode_direct(ip, timeout=3):
+    try:
+        url = f"http://ip-api.com/json/{ip}"
+        req = urllib.request.Request(
+            url,
+            headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'}
+        )
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            if data.get('status') == 'success':
+                return data.get('country', 'Unknown'), data.get('isp', 'Unknown')
+    except:
+        pass
+    return "Unknown", "Unknown"
+
+def run_proxy_check(proxy_type='all', target_url='http://cloudflare.com/cdn-cgi/trace', threads=80, timeout=4, output_file='working_proxies.txt'):
     global start_time, checked_count, working_count, working_proxies
     
     checked_count = 0
@@ -929,10 +1007,21 @@ def run_proxy_check(proxy_type='all', target_url='http://ip-api.com/json', threa
         # Sort by total cost: average latency + jitter (penalizing highly unstable latency)
         working_proxies.sort(key=lambda x: x['latency'] + x['jitter'])
         
+        # Parallel geolocation resolve for top 15 working proxies
+        top_wp = working_proxies[:15]
+        def resolve_wp(wp):
+            if wp['country'] == 'Unknown':
+                c, i = get_ip_geocode_direct(wp.get('exit_ip', wp['ip']))
+                wp['country'] = c
+                wp['isp'] = i
+                
+        with concurrent.futures.ThreadPoolExecutor(max_workers=len(top_wp) or 1) as executor:
+            executor.map(resolve_wp, top_wp)
+            
         print(f"\n{BOLD}{CYAN}Top 15 Most Stable & Fastest Working Proxies (3/3 Probes):{RESET}")
         print(f"{BOLD}{'Protocol':<10} {'IP Address':<18} {'Port':<8} {'Avg Latency':<12} {'Jitter':<10} {'Country':<15} {'ISP':<20}{RESET}")
         print("-" * 97)
-        for wp in working_proxies[:15]:
+        for wp in top_wp:
             country = wp['country'][:13] if len(wp['country']) > 13 else wp['country']
             isp = wp['isp'][:18] if len(wp['isp']) > 18 else wp['isp']
             print(f"{wp['protocol'].upper():<10} {wp['ip']:<18} {wp['port']:<8} {wp['latency']:>6.1f}ms      {wp['jitter']:>6.1f}ms    {country:<15} {isp:<20}")
@@ -1161,7 +1250,7 @@ def main():
     parser = argparse.ArgumentParser(description="Unified Proxy & VPN Connectivity Checker")
     parser.add_argument('--mode', choices=['all', 'vpn', 'vpngate', 'proxy'], default=None, help="Check mode (all, vpn, vpngate, proxy)")
     parser.add_argument('--type', choices=list(LIST_URLS.keys()), default='all', help=f"Proxy list type (choices: {', '.join(LIST_URLS.keys())})")
-    parser.add_argument('--target', default='http://ip-api.com/json', help="Target URL for proxy checks (default: http://ip-api.com/json)")
+    parser.add_argument('--target', default='http://cloudflare.com/cdn-cgi/trace', help="Target URL for proxy checks (default: http://cloudflare.com/cdn-cgi/trace)")
     parser.add_argument('--threads', type=int, default=80, help="Concurrency threads for proxy checks (default: 80)")
     parser.add_argument('--timeout', type=int, default=4, help="Timeout in seconds for proxy checks (default: 4)")
     parser.add_argument('--output', default='working_proxies.txt', help="Output file name for working proxies (default: working_proxies.txt)")

@@ -1,0 +1,4702 @@
+{
+  "timestamp": "2026-09-27 19:54:45",
+  "timestamp_id": "20260927_195445",
+  "total_elapsed_seconds": 94.69,
+  "health": {
+    "score": 69.9,
+    "badge": "🟡 فیلترینگ گسترده و اختلالات پروتکلی / تراتلینگ فعال",
+    "web_score": 70.5,
+    "circ_score": 89.3,
+    "dns_score": 72.0,
+    "qos_score": 13.7,
+    "intranet_score": 100
+  },
+  "network_identity": {
+    "ok": true,
+    "ip": "79.175.181.227",
+    "country": "Iran",
+    "country_code": "IR",
+    "city": "Tehran",
+    "isp": "افرانیک / افرانت (Afranet)",
+    "raw_isp": "AFranet Co",
+    "asn": "AS25184",
+    "org": "Afranet",
+    "provider_service": "ip-api"
+  },
+  "intranet_index": {
+    "elapsed_seconds": 7.83,
+    "mode": "OUTAGE",
+    "badge": "⚫ اختلال عمومی شبکه محلی / قطعی گسترده",
+    "description": "حتی سرویس‌های داخلی نیز با اختلال و قطعی روبه‌رو هستند (مشکل ISP یا لینک محلی).",
+    "ratio": 1.18,
+    "domestic": {
+      "total": 20,
+      "working": 13,
+      "percent": 65.0,
+      "avg_latency_ms": 2638.2,
+      "results": [
+        {
+          "name": "آپارات (Aparat)",
+          "url": "https://www.aparat.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 3319.3,
+          "error": null
+        },
+        {
+          "name": "ایرانسل (Irancell)",
+          "url": "https://irancell.ir",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2464.2,
+          "error": null
+        },
+        {
+          "name": "باما (Bama)",
+          "url": "https://bama.ir",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2941.1,
+          "error": null
+        },
+        {
+          "name": "ترب (Torob)",
+          "url": "https://torob.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2127.9,
+          "error": null
+        },
+        {
+          "name": "دیجی‌کالا (Digikala)",
+          "url": "https://www.digikala.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2081.6,
+          "error": null
+        },
+        {
+          "name": "دیوار (Divar)",
+          "url": "https://divar.ir",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2111.2,
+          "error": null
+        },
+        {
+          "name": "روبیکا (Rubika)",
+          "url": "https://rubika.ir",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 3958.1,
+          "error": null
+        },
+        {
+          "name": "شیپور (Sheypoor)",
+          "url": "https://www.sheypoor.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2627.4,
+          "error": null
+        },
+        {
+          "name": "عصر ایران (AsrIran)",
+          "url": "https://www.asriran.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2773.3,
+          "error": null
+        },
+        {
+          "name": "همراه اول (MCI)",
+          "url": "https://mci.ir",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2643.1,
+          "error": null
+        },
+        {
+          "name": "ورزش سه (Varzesh3)",
+          "url": "https://www.varzesh3.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2089.5,
+          "error": null
+        },
+        {
+          "name": "پیام‌رسان بله (Bale)",
+          "url": "https://bale.ai",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2473.6,
+          "error": null
+        },
+        {
+          "name": "کافه بازار (CafeBazaar)",
+          "url": "https://cafebazaar.ir",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2686.1,
+          "error": null
+        },
+        {
+          "name": "آسیاتک (Asiatech)",
+          "url": "https://asiatech.ir",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        },
+        {
+          "name": "ابر آروان (ArvanCloud)",
+          "url": "https://arvancloud.ir",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        },
+        {
+          "name": "ابر ستون (Sotoon)",
+          "url": "https://sotoon.ir",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        },
+        {
+          "name": "بانک تجارت",
+          "url": "https://tejaratbank.ir",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        },
+        {
+          "name": "بانک ملت",
+          "url": "https://bankmellat.ir",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        },
+        {
+          "name": "بانک ملی ایران",
+          "url": "https://bmi.ir",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        },
+        {
+          "name": "شاتل (Shatel)",
+          "url": "https://shatel.ir",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        }
+      ]
+    },
+    "international": {
+      "total": 20,
+      "working": 11,
+      "percent": 55.0,
+      "avg_latency_ms": 2668.0,
+      "results": [
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 1789.4,
+          "error": null
+        },
+        {
+          "name": "Apple",
+          "url": "https://www.apple.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2016.1,
+          "error": null
+        },
+        {
+          "name": "Cloudflare",
+          "url": "https://www.cloudflare.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 1719.7,
+          "error": null
+        },
+        {
+          "name": "GitHub",
+          "url": "https://github.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2428.7,
+          "error": null
+        },
+        {
+          "name": "Google",
+          "url": "https://www.google.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2544.5,
+          "error": null
+        },
+        {
+          "name": "Microsoft",
+          "url": "https://www.microsoft.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 4288.8,
+          "error": null
+        },
+        {
+          "name": "Python.org",
+          "url": "https://www.python.org",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 1677.5,
+          "error": null
+        },
+        {
+          "name": "Spotify",
+          "url": "https://www.spotify.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 5128.7,
+          "error": null
+        },
+        {
+          "name": "Ubuntu",
+          "url": "https://www.ubuntu.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 4058.7,
+          "error": null
+        },
+        {
+          "name": "Wikipedia",
+          "url": "https://www.wikipedia.org",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 2629.0,
+          "error": null
+        },
+        {
+          "name": "YouTube",
+          "url": "https://www.youtube.com",
+          "ok": true,
+          "code": 200,
+          "latency_ms": 1904.2,
+          "error": null
+        },
+        {
+          "name": "Anthropic / Claude",
+          "url": "https://claude.ai",
+          "ok": false,
+          "code": 403,
+          "latency_ms": 1805.2,
+          "error": "HTTP 403"
+        },
+        {
+          "name": "BBC",
+          "url": "https://www.bbc.com",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        },
+        {
+          "name": "OpenAI / ChatGPT",
+          "url": "https://chatgpt.com",
+          "ok": false,
+          "code": 403,
+          "latency_ms": 1961.4,
+          "error": "HTTP 403"
+        },
+        {
+          "name": "Reddit",
+          "url": "https://www.reddit.com",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        },
+        {
+          "name": "StackOverflow",
+          "url": "https://stackoverflow.com",
+          "ok": false,
+          "code": 403,
+          "latency_ms": 3400.8,
+          "error": "HTTP 403"
+        },
+        {
+          "name": "Telegram",
+          "url": "https://telegram.org",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        },
+        {
+          "name": "WhatsApp",
+          "url": "https://www.whatsapp.com",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        },
+        {
+          "name": "X / Twitter",
+          "url": "https://x.com",
+          "ok": false,
+          "code": null,
+          "latency_ms": null,
+          "error": "URLError"
+        }
+      ]
+    }
+  },
+  "web": {
+    "total": 132,
+    "accessible": 93,
+    "blocked": 39,
+    "accessible_percent": 70.5,
+    "avg_latency_ms": 4581.6,
+    "elapsed_seconds": 28.51,
+    "categories": {
+      "موتورهای جستجو و دانشنامه‌ها": {
+        "total": 12,
+        "accessible": 8,
+        "blocked": 4,
+        "percent": 66.7,
+        "avg_latency": 2999.9
+      },
+      "دنیای متن‌باز و لینوکس": {
+        "total": 10,
+        "accessible": 9,
+        "blocked": 1,
+        "percent": 90.0,
+        "avg_latency": 2870.6
+      },
+      "زبان‌های برنامه‌نویسی و تکنولوژی": {
+        "total": 10,
+        "accessible": 10,
+        "blocked": 0,
+        "percent": 100.0,
+        "avg_latency": 3323.7
+      },
+      "سازمان‌های استاندارد و علمی": {
+        "total": 10,
+        "accessible": 5,
+        "blocked": 5,
+        "percent": 50.0,
+        "avg_latency": 2802.1
+      },
+      "ابزارها و نرم‌افزارهای کاربردی": {
+        "total": 10,
+        "accessible": 7,
+        "blocked": 3,
+        "percent": 70.0,
+        "avg_latency": 3813.1
+      },
+      "دانشگاه‌های معتبر جهانی": {
+        "total": 10,
+        "accessible": 4,
+        "blocked": 6,
+        "percent": 40.0,
+        "avg_latency": 4905.9
+      },
+      "پایگاه‌های داده و سرورها": {
+        "total": 10,
+        "accessible": 9,
+        "blocked": 1,
+        "percent": 90.0,
+        "avg_latency": 4330.6
+      },
+      "شرکت‌های سخت‌افزاری و الکترونیکی": {
+        "total": 10,
+        "accessible": 4,
+        "blocked": 6,
+        "percent": 40.0,
+        "avg_latency": 3759.7
+      },
+      "فریم‌ورک‌ها و مدیریت محتوا": {
+        "total": 10,
+        "accessible": 8,
+        "blocked": 2,
+        "percent": 80.0,
+        "avg_latency": 4818.3
+      },
+      "بازی‌سازی و گرافیک": {
+        "total": 10,
+        "accessible": 8,
+        "blocked": 2,
+        "percent": 80.0,
+        "avg_latency": 4289.9
+      },
+      "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)": {
+        "total": 14,
+        "accessible": 8,
+        "blocked": 6,
+        "percent": 57.1,
+        "avg_latency": 3676.8
+      },
+      "زیردامنه‌های کاربردی و زیرساختی گوگل": {
+        "total": 16,
+        "accessible": 13,
+        "blocked": 3,
+        "percent": 81.2,
+        "avg_latency": 7596.6
+      }
+    },
+    "results": [
+      {
+        "url": "https://www.7-zip.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2576.4,
+        "ok": true,
+        "category": "ابزارها و نرم‌افزارهای کاربردی"
+      },
+      {
+        "url": "https://www.audacityteam.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2779.3,
+        "ok": true,
+        "category": "ابزارها و نرم‌افزارهای کاربردی"
+      },
+      {
+        "url": "https://www.blender.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2073.5,
+        "ok": true,
+        "category": "ابزارها و نرم‌افزارهای کاربردی"
+      },
+      {
+        "url": "https://www.filezilla-project.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3558.5,
+        "ok": true,
+        "category": "ابزارها و نرم‌افزارهای کاربردی"
+      },
+      {
+        "url": "https://www.gimp.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 1771.5,
+        "ok": true,
+        "category": "ابزارها و نرم‌افزارهای کاربردی"
+      },
+      {
+        "url": "https://www.videolan.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 13304.0,
+        "ok": true,
+        "category": "ابزارها و نرم‌افزارهای کاربردی"
+      },
+      {
+        "url": "https://www.wireshark.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 1815.6,
+        "ok": true,
+        "category": "ابزارها و نرم‌افزارهای کاربردی"
+      },
+      {
+        "url": "https://aistudio.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 6003.2,
+        "ok": true,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://cohere.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3520.5,
+        "ok": true,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://discord.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3440.6,
+        "ok": true,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://gemini.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3497.7,
+        "ok": true,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://huggingface.co",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3756.0,
+        "ok": true,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://mistral.ai",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3258.0,
+        "ok": true,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://replicate.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3960.2,
+        "ok": true,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://www.together.ai",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 4849.2,
+        "ok": true,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://godotengine.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3129.6,
+        "ok": true,
+        "category": "بازی‌سازی و گرافیک"
+      },
+      {
+        "url": "https://vulkan.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3078.0,
+        "ok": true,
+        "category": "بازی‌سازی و گرافیک"
+      },
+      {
+        "url": "https://www.ea.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3369.9,
+        "ok": true,
+        "category": "بازی‌سازی و گرافیک"
+      },
+      {
+        "url": "https://www.khronos.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 4452.0,
+        "ok": true,
+        "category": "بازی‌سازی و گرافیک"
+      },
+      {
+        "url": "https://www.nintendo.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 6361.6,
+        "ok": true,
+        "category": "بازی‌سازی و گرافیک"
+      },
+      {
+        "url": "https://www.opengl.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2851.7,
+        "ok": true,
+        "category": "بازی‌سازی و گرافیک"
+      },
+      {
+        "url": "https://www.playstation.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 7576.6,
+        "ok": true,
+        "category": "بازی‌سازی و گرافیک"
+      },
+      {
+        "url": "https://www.xbox.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 6164.8,
+        "ok": true,
+        "category": "بازی‌سازی و گرافیک"
+      },
+      {
+        "url": "https://www.caltech.edu",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 5400.8,
+        "ok": true,
+        "category": "دانشگاه‌های معتبر جهانی"
+      },
+      {
+        "url": "https://www.harvard.edu",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3562.6,
+        "ok": true,
+        "category": "دانشگاه‌های معتبر جهانی"
+      },
+      {
+        "url": "https://www.mit.edu",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 4043.9,
+        "ok": true,
+        "category": "دانشگاه‌های معتبر جهانی"
+      },
+      {
+        "url": "https://www.yale.edu",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 11631.2,
+        "ok": true,
+        "category": "دانشگاه‌های معتبر جهانی"
+      },
+      {
+        "url": "https://www.archlinux.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 5300.3,
+        "ok": true,
+        "category": "دنیای متن‌باز و لینوکس"
+      },
+      {
+        "url": "https://www.centos.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3368.2,
+        "ok": true,
+        "category": "دنیای متن‌باز و لینوکس"
+      },
+      {
+        "url": "https://www.debian.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2172.8,
+        "ok": true,
+        "category": "دنیای متن‌باز و لینوکس"
+      },
+      {
+        "url": "https://www.freebsd.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3584.9,
+        "ok": true,
+        "category": "دنیای متن‌باز و لینوکس"
+      },
+      {
+        "url": "https://www.kernel.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2527.3,
+        "ok": true,
+        "category": "دنیای متن‌باز و لینوکس"
+      },
+      {
+        "url": "https://www.linux.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2844.5,
+        "ok": true,
+        "category": "دنیای متن‌باز و لینوکس"
+      },
+      {
+        "url": "https://www.openbsd.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 1528.2,
+        "ok": true,
+        "category": "دنیای متن‌باز و لینوکس"
+      },
+      {
+        "url": "https://www.opensuse.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 509.2,
+        "ok": true,
+        "category": "دنیای متن‌باز و لینوکس"
+      },
+      {
+        "url": "https://www.ubuntu.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 4525.2,
+        "ok": true,
+        "category": "دنیای متن‌باز و لینوکس"
+      },
+      {
+        "url": "https://go.dev",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3435.6,
+        "ok": true,
+        "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+      },
+      {
+        "url": "https://www.haskell.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3135.9,
+        "ok": true,
+        "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+      },
+      {
+        "url": "https://www.java.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 4566.0,
+        "ok": true,
+        "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+      },
+      {
+        "url": "https://www.lua.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2036.5,
+        "ok": true,
+        "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+      },
+      {
+        "url": "https://www.perl.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3459.9,
+        "ok": true,
+        "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+      },
+      {
+        "url": "https://www.php.net",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 4011.5,
+        "ok": true,
+        "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+      },
+      {
+        "url": "https://www.python.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 799.2,
+        "ok": true,
+        "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+      },
+      {
+        "url": "https://www.ruby-lang.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3257.4,
+        "ok": true,
+        "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+      },
+      {
+        "url": "https://www.rust-lang.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 5096.9,
+        "ok": true,
+        "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+      },
+      {
+        "url": "https://www.scala-lang.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3437.6,
+        "ok": true,
+        "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+      },
+      {
+        "url": "https://ajax.googleapis.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 11056.1,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://analytics.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 8025.4,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://cloud.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3298.5,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://colab.research.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 6306.3,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://console.cloud.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 8971.2,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://developers.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3650.0,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://docs.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 9657.5,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://drive.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 9282.9,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://mail.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 12212.0,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://meet.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 11943.1,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://play.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 9463.1,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://scholar.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3908.7,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://translate.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 9620.4,
+        "ok": true,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://www.cern.ch",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 6389.3,
+        "ok": true,
+        "category": "سازمان‌های استاندارد و علمی"
+      },
+      {
+        "url": "https://www.esa.int",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2061.3,
+        "ok": true,
+        "category": "سازمان‌های استاندارد و علمی"
+      },
+      {
+        "url": "https://www.iana.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2362.8,
+        "ok": true,
+        "category": "سازمان‌های استاندارد و علمی"
+      },
+      {
+        "url": "https://www.ietf.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2213.7,
+        "ok": true,
+        "category": "سازمان‌های استاندارد و علمی"
+      },
+      {
+        "url": "https://www.nasa.gov",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2045.5,
+        "ok": true,
+        "category": "سازمان‌های استاندارد و علمی"
+      },
+      {
+        "url": "https://www.asus.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 4285.1,
+        "ok": true,
+        "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+      },
+      {
+        "url": "https://www.lenovo.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 4911.7,
+        "ok": true,
+        "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+      },
+      {
+        "url": "https://www.philips.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 4594.5,
+        "ok": true,
+        "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+      },
+      {
+        "url": "https://www.samsung.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 6575.9,
+        "ok": true,
+        "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+      },
+      {
+        "url": "https://angular.io",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 7292.3,
+        "ok": true,
+        "category": "فریم‌ورک‌ها و مدیریت محتوا"
+      },
+      {
+        "url": "https://bootstrap.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 6075.1,
+        "ok": true,
+        "category": "فریم‌ورک‌ها و مدیریت محتوا"
+      },
+      {
+        "url": "https://drupal.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 6457.0,
+        "ok": true,
+        "category": "فریم‌ورک‌ها و مدیریت محتوا"
+      },
+      {
+        "url": "https://joomla.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 8644.3,
+        "ok": true,
+        "category": "فریم‌ورک‌ها و مدیریت محتوا"
+      },
+      {
+        "url": "https://jquery.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2708.7,
+        "ok": true,
+        "category": "فریم‌ورک‌ها و مدیریت محتوا"
+      },
+      {
+        "url": "https://react.dev",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2423.2,
+        "ok": true,
+        "category": "فریم‌ورک‌ها و مدیریت محتوا"
+      },
+      {
+        "url": "https://vuejs.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2601.6,
+        "ok": true,
+        "category": "فریم‌ورک‌ها و مدیریت محتوا"
+      },
+      {
+        "url": "https://wordpress.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2979.2,
+        "ok": true,
+        "category": "فریم‌ورک‌ها و مدیریت محتوا"
+      },
+      {
+        "url": "https://lineageos.org/",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2894.2,
+        "ok": true,
+        "category": "موتورهای جستجو و دانشنامه‌ها"
+      },
+      {
+        "url": "https://www.bing.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 655.8,
+        "ok": true,
+        "category": "موتورهای جستجو و دانشنامه‌ها"
+      },
+      {
+        "url": "https://www.dictionary.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2991.8,
+        "ok": true,
+        "category": "موتورهای جستجو و دانشنامه‌ها"
+      },
+      {
+        "url": "https://www.google.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 901.7,
+        "ok": true,
+        "category": "موتورهای جستجو و دانشنامه‌ها"
+      },
+      {
+        "url": "https://www.thesaurus.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2241.6,
+        "ok": true,
+        "category": "موتورهای جستجو و دانشنامه‌ها"
+      },
+      {
+        "url": "https://www.weather.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 8002.7,
+        "ok": true,
+        "category": "موتورهای جستجو و دانشنامه‌ها"
+      },
+      {
+        "url": "https://www.wikipedia.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2152.4,
+        "ok": true,
+        "category": "موتورهای جستجو و دانشنامه‌ها"
+      },
+      {
+        "url": "https://www.yahoo.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2966.2,
+        "ok": true,
+        "category": "موتورهای جستجو و دانشنامه‌ها"
+      },
+      {
+        "url": "https://www.apache.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3396.5,
+        "ok": true,
+        "category": "پایگاه‌های داده و سرورها"
+      },
+      {
+        "url": "https://www.haproxy.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3506.3,
+        "ok": true,
+        "category": "پایگاه‌های داده و سرورها"
+      },
+      {
+        "url": "https://www.lighttpd.net",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 2386.3,
+        "ok": true,
+        "category": "پایگاه‌های داده و سرورها"
+      },
+      {
+        "url": "https://www.mariadb.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 5423.7,
+        "ok": true,
+        "category": "پایگاه‌های داده و سرورها"
+      },
+      {
+        "url": "https://www.mongodb.com",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 4531.0,
+        "ok": true,
+        "category": "پایگاه‌های داده و سرورها"
+      },
+      {
+        "url": "https://www.nginx.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 6805.9,
+        "ok": true,
+        "category": "پایگاه‌های داده و سرورها"
+      },
+      {
+        "url": "https://www.postgresql.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 4505.3,
+        "ok": true,
+        "category": "پایگاه‌های داده و سرورها"
+      },
+      {
+        "url": "https://www.redis.io",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 5785.9,
+        "ok": true,
+        "category": "پایگاه‌های داده و سرورها"
+      },
+      {
+        "url": "https://www.sqlite.org",
+        "status": "باز (Available)",
+        "code": 200,
+        "latency": 3541.8,
+        "ok": true,
+        "category": "پایگاه‌های داده و سرورها"
+      },
+      {
+        "url": "https://www.inkscape.org",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 3763.7,
+        "ok": false,
+        "category": "ابزارها و نرم‌افزارهای کاربردی"
+      },
+      {
+        "url": "https://www.libreoffice.org",
+        "status": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)",
+        "code": "TLS_TIMEOUT",
+        "latency": null,
+        "ok": false,
+        "category": "ابزارها و نرم‌افزارهای کاربردی"
+      },
+      {
+        "url": "https://www.virtualbox.org",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2675.1,
+        "ok": false,
+        "category": "ابزارها و نرم‌افزارهای کاربردی"
+      },
+      {
+        "url": "https://api.anthropic.com",
+        "status": "خطا (HTTP 404)",
+        "code": 404,
+        "latency": 3050.7,
+        "ok": false,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://api.openai.com",
+        "status": "خطا (HTTP 421)",
+        "code": 421,
+        "latency": 3979.2,
+        "ok": false,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://chatgpt.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2243.9,
+        "ok": false,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://claude.ai",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2152.7,
+        "ok": false,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://platform.openai.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 4759.6,
+        "ok": false,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://www.perplexity.ai",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 3003.7,
+        "ok": false,
+        "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+      },
+      {
+        "url": "https://unity.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2904.1,
+        "ok": false,
+        "category": "بازی‌سازی و گرافیک"
+      },
+      {
+        "url": "https://www.unrealengine.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 3010.5,
+        "ok": false,
+        "category": "بازی‌سازی و گرافیک"
+      },
+      {
+        "url": "https://www.cam.ac.uk",
+        "status": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)",
+        "code": "TLS_TIMEOUT",
+        "latency": null,
+        "ok": false,
+        "category": "دانشگاه‌های معتبر جهانی"
+      },
+      {
+        "url": "https://www.columbia.edu",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 3080.7,
+        "ok": false,
+        "category": "دانشگاه‌های معتبر جهانی"
+      },
+      {
+        "url": "https://www.cornell.edu",
+        "status": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)",
+        "code": "TLS_TIMEOUT",
+        "latency": null,
+        "ok": false,
+        "category": "دانشگاه‌های معتبر جهانی"
+      },
+      {
+        "url": "https://www.ox.ac.uk",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2976.7,
+        "ok": false,
+        "category": "دانشگاه‌های معتبر جهانی"
+      },
+      {
+        "url": "https://www.princeton.edu",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 3645.1,
+        "ok": false,
+        "category": "دانشگاه‌های معتبر جهانی"
+      },
+      {
+        "url": "https://www.stanford.edu",
+        "status": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)",
+        "code": "TLS_TIMEOUT",
+        "latency": null,
+        "ok": false,
+        "category": "دانشگاه‌های معتبر جهانی"
+      },
+      {
+        "url": "https://www.fedoraproject.org",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2345.3,
+        "ok": false,
+        "category": "دنیای متن‌باز و لینوکس"
+      },
+      {
+        "url": "https://calendar.google.com",
+        "status": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)",
+        "code": "TLS_TIMEOUT",
+        "latency": null,
+        "ok": false,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://developer.android.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 3508.3,
+        "ok": false,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://fonts.googleapis.com",
+        "status": "خطا (HTTP 404)",
+        "code": 404,
+        "latency": 3045.0,
+        "ok": false,
+        "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+      },
+      {
+        "url": "https://www.acm.org",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2622.8,
+        "ok": false,
+        "category": "سازمان‌های استاندارد و علمی"
+      },
+      {
+        "url": "https://www.icann.org",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2381.9,
+        "ok": false,
+        "category": "سازمان‌های استاندارد و علمی"
+      },
+      {
+        "url": "https://www.ieee.org",
+        "status": "خطا (HTTP 202)",
+        "code": 202,
+        "latency": 2803.7,
+        "ok": false,
+        "category": "سازمان‌های استاندارد و علمی"
+      },
+      {
+        "url": "https://www.iso.org",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2225.4,
+        "ok": false,
+        "category": "سازمان‌های استاندارد و علمی"
+      },
+      {
+        "url": "https://www.w3.org",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2914.8,
+        "ok": false,
+        "category": "سازمان‌های استاندارد و علمی"
+      },
+      {
+        "url": "https://www.bosch.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 3190.8,
+        "ok": false,
+        "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+      },
+      {
+        "url": "https://www.gigabyte.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2814.2,
+        "ok": false,
+        "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+      },
+      {
+        "url": "https://www.lg.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2730.9,
+        "ok": false,
+        "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+      },
+      {
+        "url": "https://www.msi.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 3242.9,
+        "ok": false,
+        "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+      },
+      {
+        "url": "https://www.panasonic.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2772.5,
+        "ok": false,
+        "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+      },
+      {
+        "url": "https://www.sony.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 2478.6,
+        "ok": false,
+        "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+      },
+      {
+        "url": "https://magento.com",
+        "status": "تایم‌اوت اتصال (Timeout)",
+        "code": "TIMEOUT",
+        "latency": null,
+        "ok": false,
+        "category": "فریم‌ورک‌ها و مدیریت محتوا"
+      },
+      {
+        "url": "https://moodle.org",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 4183.2,
+        "ok": false,
+        "category": "فریم‌ورک‌ها و مدیریت محتوا"
+      },
+      {
+        "url": "https://www.accuweather.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 3301.2,
+        "ok": false,
+        "category": "موتورهای جستجو و دانشنامه‌ها"
+      },
+      {
+        "url": "https://www.britannica.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 3036.1,
+        "ok": false,
+        "category": "موتورهای جستجو و دانشنامه‌ها"
+      },
+      {
+        "url": "https://www.imdb.com",
+        "status": "خطا (HTTP 202)",
+        "code": 202,
+        "latency": 3567.7,
+        "ok": false,
+        "category": "موتورهای جستجو و دانشنامه‌ها"
+      },
+      {
+        "url": "https://www.timeanddate.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 3287.5,
+        "ok": false,
+        "category": "موتورهای جستجو و دانشنامه‌ها"
+      },
+      {
+        "url": "https://www.mysql.com",
+        "status": "خطا (HTTP 403)",
+        "code": 403,
+        "latency": 3423.1,
+        "ok": false,
+        "category": "پایگاه‌های داده و سرورها"
+      }
+    ]
+  },
+  "dns": {
+    "total": 25,
+    "working": 18,
+    "elapsed_seconds": 3.54,
+    "results": [
+      {
+        "ip": "185.113.59.253",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "185.161.112.33",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "185.161.112.34",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "185.187.84.15",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "185.231.182.126",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "185.51.200.10",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "185.51.200.50",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "185.97.117.187",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "194.225.62.80",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "194.225.73.141",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "2.188.21.132",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "2.189.44.44",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "213.176.123.5",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "37.156.145.229",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "46.224.1.42",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "80.191.40.41",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "91.245.229.1",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "91.99.101.12",
+        "ok": true,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": "140.82.121.3"
+        }
+      },
+      {
+        "ip": "194.225.152.12",
+        "ok": false,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": null
+        }
+      },
+      {
+        "ip": "2.188.21.130",
+        "ok": false,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": null
+        }
+      },
+      {
+        "ip": "2.188.21.131",
+        "ok": false,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": null
+        }
+      },
+      {
+        "ip": "217.218.155.155",
+        "ok": false,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": null
+        }
+      },
+      {
+        "ip": "37.156.145.21",
+        "ok": false,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": null
+        }
+      },
+      {
+        "ip": "81.91.144.116",
+        "ok": false,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": null
+        }
+      },
+      {
+        "ip": "92.119.56.162",
+        "ok": false,
+        "resolved": {
+          "sotoon.ir": "185.166.104.4",
+          "google.com": "142.250.180.14",
+          "github.com": null
+        }
+      }
+    ]
+  },
+  "vpn": {
+    "total": 40,
+    "working": 13,
+    "elapsed_seconds": 30.48,
+    "results": [
+      {
+        "name": "PotatoVPN (Website)",
+        "url": "https://potatovpn.com",
+        "ok": true,
+        "latency": 953.1,
+        "info": "HTTP 200"
+      },
+      {
+        "name": "Streisand VPN (GitHub)",
+        "url": "https://raw.githubusercontent.com/StreisandConnect/Streisand/master/README.md",
+        "ok": true,
+        "latency": 980.3,
+        "info": "HTTP 404"
+      },
+      {
+        "name": "Proton VPN (Auth API)",
+        "url": "https://api.protonvpn.ch",
+        "ok": true,
+        "latency": 1345.1,
+        "info": "HTTP 404"
+      },
+      {
+        "name": "Ostrich VPN (Website)",
+        "url": "https://ostrichvpn.net",
+        "ok": true,
+        "latency": 1368.2,
+        "info": "HTTP 200"
+      },
+      {
+        "name": "Free VPN by FreeVPN.org (Website)",
+        "url": "https://freevpnapp.org",
+        "ok": true,
+        "latency": 1779.4,
+        "info": "HTTP 200"
+      },
+      {
+        "name": "VPN 360 (Website)",
+        "url": "https://www.vpn360.com",
+        "ok": true,
+        "latency": 1800.3,
+        "info": "HTTP 200"
+      },
+      {
+        "name": "OpenVPN (Website)",
+        "url": "https://openvpn.net",
+        "ok": true,
+        "latency": 2296.7,
+        "info": "HTTP 200"
+      },
+      {
+        "name": "ZeroTier (Central API)",
+        "url": "https://my.zerotier.com",
+        "ok": true,
+        "latency": 2439.5,
+        "info": "HTTP 200"
+      },
+      {
+        "name": "VMP VPN (Website)",
+        "url": "https://vpnmasterpro.com",
+        "ok": true,
+        "latency": 2673.2,
+        "info": "HTTP 200"
+      },
+      {
+        "name": "Npv Tunnel (Website)",
+        "url": "https://vonmatrix.com",
+        "ok": true,
+        "latency": 2703.9,
+        "info": "HTTP 200"
+      },
+      {
+        "name": "NewNode (Website/CDN)",
+        "url": "https://newnode.com",
+        "ok": true,
+        "latency": 3068.6,
+        "info": "HTTP 200"
+      },
+      {
+        "name": "Tailscale (Control Plane)",
+        "url": "https://controlplane.tailscale.com",
+        "ok": true,
+        "latency": 3316.0,
+        "info": "HTTP 200"
+      },
+      {
+        "name": "PlatoVPN (Website)",
+        "url": "https://platovpn.com",
+        "ok": true,
+        "latency": 8225.3,
+        "info": "HTTP 200"
+      },
+      {
+        "name": "AdGuard VPN (API)",
+        "url": "https://api.adguard-vpn.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Betternet (Website)",
+        "url": "https://www.betternet.co",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "CalyxVPN (API)",
+        "url": "https://api.calyx.net",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Cloudflare WARP (API)",
+        "url": "https://api.cloudflareclient.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable (_ssl.c:1064: The handshake operation timed out)"
+      },
+      {
+        "name": "CyberGhost (API)",
+        "url": "https://api.cyberghostvpn.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Geph VPN (Binder API)",
+        "url": "https://binder.geph.io",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Hide.me VPN (API)",
+        "url": "https://api.hide.me",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Hotspot Shield (Auth)",
+        "url": "https://api.hotspotshield.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "JumpJumpVPN (Website)",
+        "url": "https://jumpjump.io",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Lantern VPN (Website)",
+        "url": "https://getlantern.org",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Outline VPN (Website)",
+        "url": "https://getoutline.org",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Psiphon (Bootstrap)",
+        "url": "https://psiphon3.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Riseup VPN (Leap API)",
+        "url": "https://api.black.riseup.net",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "RostamVPN (Website)",
+        "url": "https://rostam.app",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Speedify (Master Server)",
+        "url": "https://api.speedify.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Tor Network (Status Check)",
+        "url": "https://check.torproject.org",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Tor Project (Bridge API)",
+        "url": "https://bridges.torproject.org",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "TunnelBear (API)",
+        "url": "https://api.tunnelbear.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Turbo VPN (Website)",
+        "url": "https://turbovpn.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Ultrasurf (Bootstrap)",
+        "url": "https://ultrasurf.us",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 8] nodename nor servname provided, or not known)"
+      },
+      {
+        "name": "VPN Super (Website)",
+        "url": "https://vpnsuper.co",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 8] nodename nor servname provided, or not known)"
+      },
+      {
+        "name": "VPN Unlimited (Website)",
+        "url": "https://www.vpnunlimited.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "VPNProxyMaster (Website)",
+        "url": "https://vpnproxymaster.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Windscribe VPN (API)",
+        "url": "https://api.windscribe.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "Wirevpn (Website)",
+        "url": "https://wirevpn.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 8] nodename nor servname provided, or not known)"
+      },
+      {
+        "name": "X-VPN (Website)",
+        "url": "https://xvpn.io",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      },
+      {
+        "name": "vpnify (Website)",
+        "url": "https://vpnifyapp.com",
+        "ok": false,
+        "latency": null,
+        "info": "Unreachable ([Errno 61] Connection refused)"
+      }
+    ]
+  },
+  "qos": {
+    "elapsed_seconds": 9.58,
+    "stability": {
+      "stability_status": "UNSTABLE",
+      "stability_badge": "🟡 جیتر شدید و نوسان پکت (High Jitter / Route Instability)",
+      "domestic": {
+        "avg_latency_ms": 309.9,
+        "avg_jitter_ms": 339.4,
+        "avg_packet_loss_pct": 33.3,
+        "healthy_count": 3,
+        "total_targets": 4,
+        "results": [
+          {
+            "name": "ابر ستون (Sotoon)",
+            "host": "sotoon.ir",
+            "ok": true,
+            "transmitted": 3,
+            "received": 3,
+            "packet_loss_pct": 0.0,
+            "avg_rtt_ms": 271.7,
+            "min_rtt_ms": 35.0,
+            "max_rtt_ms": 742.2,
+            "jitter_ms": 353.6,
+            "samples": [
+              742.207,
+              37.982,
+              35.033
+            ]
+          },
+          {
+            "name": "دیجی‌کالا (Digikala)",
+            "host": "digikala.com",
+            "ok": true,
+            "transmitted": 3,
+            "received": 3,
+            "packet_loss_pct": 0.0,
+            "avg_rtt_ms": 278.1,
+            "min_rtt_ms": 54.2,
+            "max_rtt_ms": 724.7,
+            "jitter_ms": 335.8,
+            "samples": [
+              724.722,
+              54.235,
+              55.334
+            ]
+          },
+          {
+            "name": "آپارات (Aparat)",
+            "host": "aparat.com",
+            "ok": true,
+            "transmitted": 3,
+            "received": 2,
+            "packet_loss_pct": 33.3,
+            "avg_rtt_ms": 380.0,
+            "min_rtt_ms": 45.8,
+            "max_rtt_ms": 714.3,
+            "jitter_ms": 668.4,
+            "samples": [
+              714.259,
+              45.833
+            ]
+          },
+          {
+            "name": "دی‌ان‌اس شکن (Shecan)",
+            "host": "178.22.122.100",
+            "ok": false,
+            "transmitted": 3,
+            "received": 0,
+            "packet_loss_pct": 100.0,
+            "avg_rtt_ms": null,
+            "min_rtt_ms": null,
+            "max_rtt_ms": null,
+            "jitter_ms": 0.0,
+            "samples": []
+          }
+        ]
+      },
+      "international": {
+        "avg_latency_ms": 328.7,
+        "avg_jitter_ms": 317.6,
+        "avg_packet_loss_pct": 0.0,
+        "healthy_count": 4,
+        "total_targets": 4,
+        "results": [
+          {
+            "name": "Google DNS (8.8.8.8)",
+            "host": "8.8.8.8",
+            "ok": true,
+            "transmitted": 3,
+            "received": 3,
+            "packet_loss_pct": 0.0,
+            "avg_rtt_ms": 313.6,
+            "min_rtt_ms": 99.9,
+            "max_rtt_ms": 740.4,
+            "jitter_ms": 320.5,
+            "samples": [
+              740.355,
+              99.935,
+              100.585
+            ]
+          },
+          {
+            "name": "Wikimedia Global CDN",
+            "host": "wikimedia.org",
+            "ok": true,
+            "transmitted": 3,
+            "received": 3,
+            "packet_loss_pct": 0.0,
+            "avg_rtt_ms": 320.6,
+            "min_rtt_ms": 110.4,
+            "max_rtt_ms": 726.7,
+            "jitter_ms": 308.2,
+            "samples": [
+              726.709,
+              124.813,
+              110.388
+            ]
+          },
+          {
+            "name": "Quad9 DNS (9.9.9.9)",
+            "host": "9.9.9.9",
+            "ok": true,
+            "transmitted": 3,
+            "received": 3,
+            "packet_loss_pct": 0.0,
+            "avg_rtt_ms": 335.5,
+            "min_rtt_ms": 127.2,
+            "max_rtt_ms": 749.1,
+            "jitter_ms": 312.5,
+            "samples": [
+              749.133,
+              127.157,
+              130.195
+            ]
+          },
+          {
+            "name": "Cloudflare DNS (1.1.1.1)",
+            "host": "1.1.1.1",
+            "ok": true,
+            "transmitted": 3,
+            "received": 3,
+            "packet_loss_pct": 0.0,
+            "avg_rtt_ms": 345.2,
+            "min_rtt_ms": 113.2,
+            "max_rtt_ms": 771.7,
+            "jitter_ms": 329.3,
+            "samples": [
+              771.697,
+              150.793,
+              113.159
+            ]
+          }
+        ]
+      }
+    },
+    "throttling": {
+      "status": "NORMAL_SPEED",
+      "badge": "🟢 سرعت تبادل اطلاعات مناسب و بدون تراتلینگ حاد",
+      "summary": "سرعت بین‌الملل (1.29 Mbps) در تناسب قابل قبولی با ترافیک داخلی است.",
+      "domestic_avg_mbps": 1.04,
+      "international_avg_mbps": 1.29,
+      "domestic": [
+        {
+          "name": "ورزش سه (Varzesh3 CDN)",
+          "url": "https://www.varzesh3.com/",
+          "ok": true,
+          "size_kb": 1101.1,
+          "duration_seconds": 2.84,
+          "speed_kb_s": 388.2,
+          "speed_mbps": 3.18,
+          "error": null
+        },
+        {
+          "name": "ابر ستون (Sotoon Cloud)",
+          "url": "https://sotoon.ir/",
+          "ok": true,
+          "size_kb": 344.5,
+          "duration_seconds": 2.91,
+          "speed_kb_s": 118.6,
+          "speed_mbps": 0.97,
+          "error": null
+        },
+        {
+          "name": "کافه بازار (Bazaar CDN)",
+          "url": "https://cafebazaar.ir/",
+          "ok": true,
+          "size_kb": 326.8,
+          "duration_seconds": 3.06,
+          "speed_kb_s": 107.0,
+          "speed_mbps": 0.88,
+          "error": null
+        },
+        {
+          "name": "آسیاتک (Asiatech CDN)",
+          "url": "https://asiatech.ir/",
+          "ok": true,
+          "size_kb": 57.4,
+          "duration_seconds": 2.84,
+          "speed_kb_s": 20.2,
+          "speed_mbps": 0.17,
+          "error": null
+        },
+        {
+          "name": "ابر آروان (ArvanCloud CDN)",
+          "url": "https://arvancloud.ir/",
+          "ok": true,
+          "size_kb": 5.9,
+          "duration_seconds": 2.91,
+          "speed_kb_s": 2.0,
+          "speed_mbps": 0.02,
+          "error": null
+        }
+      ],
+      "international": [
+        {
+          "name": "Cloudflare Speed (500KB)",
+          "url": "https://speed.cloudflare.com/__down?bytes=500000",
+          "ok": true,
+          "size_kb": 488.3,
+          "duration_seconds": 2.43,
+          "speed_kb_s": 200.5,
+          "speed_mbps": 1.64,
+          "error": null
+        },
+        {
+          "name": "Wikimedia Global CDN (220KB)",
+          "url": "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png",
+          "ok": true,
+          "size_kb": 219.3,
+          "duration_seconds": 1.9,
+          "speed_kb_s": 115.4,
+          "speed_mbps": 0.95,
+          "error": null
+        },
+        {
+          "name": "AWS CloudFront Static",
+          "url": "https://d1.awsstatic.com/logos/aws-logo-lockups/poweredbyaws/PB_AWS_logo_RGB_stacked_REV_SQ.png",
+          "ok": false,
+          "size_kb": 0.0,
+          "duration_seconds": 1.45,
+          "speed_kb_s": 0.0,
+          "speed_mbps": 0.0,
+          "error": "HTTPError"
+        }
+      ]
+    },
+    "traceroute": {
+      "target": "1.1.1.1",
+      "reached_target": true,
+      "status_code": "ROUTING_HEALTHY",
+      "status_badge": "🟢 روتینگ سالم تا مقصد",
+      "diagnosis": "مسیر تا مقصد نهایی (1.1.1.1) کاملاً باز و بدون قطعی است (11 هاپ).",
+      "total_hops_inspected": 11,
+      "drop_hop": null,
+      "last_valid_hop": {
+        "hop": 12,
+        "ip": "1.1.1.1",
+        "rtt_ms": 125.722,
+        "category": "INTERNATIONAL_TRANSIT",
+        "desc": "شبکه ترانزیت بین‌الملل (Tier-1 Transit)",
+        "status": "OK"
+      },
+      "hops": [
+        {
+          "hop": 2,
+          "ip": "10.0.100.1",
+          "rtt_ms": 35.335,
+          "category": "LAN_ROUTER",
+          "desc": "مودم / روتر محلی کاربر",
+          "status": "OK"
+        },
+        {
+          "hop": 3,
+          "ip": "79.175.181.253",
+          "rtt_ms": 39.437,
+          "category": "LOCAL_ISP_CORE",
+          "desc": "هسته شبکه اپراتور اینترنت (ISP Core)",
+          "status": "OK"
+        },
+        {
+          "hop": 4,
+          "ip": "172.19.190.93",
+          "rtt_ms": 41.338,
+          "category": "LOCAL_ISP_CORE",
+          "desc": "هسته شبکه اپراتور اینترنت (ISP Core)",
+          "status": "OK"
+        },
+        {
+          "hop": 5,
+          "ip": "172.26.0.33",
+          "rtt_ms": 24.785,
+          "category": "LOCAL_ISP_CORE",
+          "desc": "هسته شبکه اپراتور اینترنت (ISP Core)",
+          "status": "OK"
+        },
+        {
+          "hop": 6,
+          "ip": "172.28.0.253",
+          "rtt_ms": 45.002,
+          "category": "LOCAL_ISP_CORE",
+          "desc": "هسته شبکه اپراتور اینترنت (ISP Core)",
+          "status": "OK"
+        },
+        {
+          "hop": 7,
+          "ip": "172.22.5.1",
+          "rtt_ms": 33.161,
+          "category": "INTERNATIONAL_TRANSIT",
+          "desc": "شبکه ترانزیت بین‌الملل (Tier-1 Transit)",
+          "status": "OK"
+        },
+        {
+          "hop": 8,
+          "ip": "217.11.30.222",
+          "rtt_ms": 26.571,
+          "category": "TIC_NATIONAL_GATEWAY",
+          "desc": "درگاه فیلترینگ و مرز شرکت ارتباطات زیرساخت (TIC AS12880)",
+          "status": "OK"
+        },
+        {
+          "hop": 9,
+          "ip": "10.202.7.122",
+          "rtt_ms": 42.731,
+          "category": "TIC_NATIONAL_GATEWAY",
+          "desc": "درگاه فیلترینگ و مرز شرکت ارتباطات زیرساخت (TIC AS12880)",
+          "status": "OK"
+        },
+        {
+          "hop": 10,
+          "ip": "80.81.194.180",
+          "rtt_ms": 122.302,
+          "category": "INTERNATIONAL_TRANSIT",
+          "desc": "شبکه ترانزیت بین‌الملل (Tier-1 Transit)",
+          "status": "OK"
+        },
+        {
+          "hop": 11,
+          "ip": "162.158.84.221",
+          "rtt_ms": 142.762,
+          "category": "INTERNATIONAL_TRANSIT",
+          "desc": "شبکه ترانزیت بین‌الملل (Tier-1 Transit)",
+          "status": "OK"
+        },
+        {
+          "hop": 12,
+          "ip": "1.1.1.1",
+          "rtt_ms": 125.722,
+          "category": "INTERNATIONAL_TRANSIT",
+          "desc": "شبکه ترانزیت بین‌الملل (Tier-1 Transit)",
+          "status": "OK"
+        }
+      ]
+    }
+  },
+  "circumvention": {
+    "elapsed_seconds": 4.16,
+    "summary": {
+      "protocols_working": 11,
+      "protocols_total": 14,
+      "protocols_percent": 78.6,
+      "doh_working": 1,
+      "doh_total": 4,
+      "dot_working": 3,
+      "dot_total": 4,
+      "clean_ips_working": 15,
+      "clean_ips_total": 15,
+      "clean_ips_percent": 100.0
+    },
+    "protocols": [
+      {
+        "name": "Shadowsocks Default (Port 8388)",
+        "protocol": "Shadowsocks (AEAD)",
+        "host": "1.1.1.1:8388",
+        "ok": true,
+        "latency_ms": 50.7,
+        "status": "SS_ALIVE_NO_RST",
+        "detail": "پورت باز و عدم تزریق RST پس از ارسال انتروپی (50.7ms)"
+      },
+      {
+        "name": "TUIC QUIC v1 (Port 443)",
+        "protocol": "TUIC/QUICv1",
+        "host": "8.8.8.8:443",
+        "ok": true,
+        "latency_ms": 143.2,
+        "status": "UDP_OPEN",
+        "detail": "پاسخ استاندارد UDP/QUIC دریافت شد (35 بایت, 143.2ms)"
+      },
+      {
+        "name": "Hysteria2 UDP (Port 443)",
+        "protocol": "Hysteria2/QUIC",
+        "host": "1.1.1.1:443",
+        "ok": true,
+        "latency_ms": 143.5,
+        "status": "UDP_OPEN",
+        "detail": "پاسخ استاندارد UDP/QUIC دریافت شد (27 بایت, 143.5ms)"
+      },
+      {
+        "name": "Hysteria2 UDP (Port 8443)",
+        "protocol": "Hysteria2/QUIC",
+        "host": "1.1.1.1:8443",
+        "ok": true,
+        "latency_ms": 143.5,
+        "status": "UDP_OPEN",
+        "detail": "پاسخ استاندارد UDP/QUIC دریافت شد (27 بایت, 143.5ms)"
+      },
+      {
+        "name": "Apple (gateway.icloud.com)",
+        "protocol": "Reality (TLS 1.3)",
+        "host": "17.253.144.10:443",
+        "ok": true,
+        "latency_ms": 500.0,
+        "status": "REALITY_PASS",
+        "detail": "هندشیک امن Reality موفق (500.0ms)"
+      },
+      {
+        "name": "Cloudflare WS (Port 443)",
+        "protocol": "V2Ray (WebSocket/TLS)",
+        "host": "104.21.5.198:443",
+        "ok": true,
+        "latency_ms": 551.8,
+        "status": "WS_REACHABLE",
+        "detail": "ارتباط وب‌سوکت برقرار شد (551.8ms)"
+      },
+      {
+        "name": "Cloudflare WS (Port 2083)",
+        "protocol": "V2Ray (WebSocket/TLS)",
+        "host": "104.21.5.198:2083",
+        "ok": true,
+        "latency_ms": 641.0,
+        "status": "WS_REACHABLE",
+        "detail": "ارتباط وب‌سوکت برقرار شد (641.0ms)"
+      },
+      {
+        "name": "Cloudflare WS (Port 2053)",
+        "protocol": "V2Ray (WebSocket/TLS)",
+        "host": "104.21.5.198:2053",
+        "ok": true,
+        "latency_ms": 674.6,
+        "status": "WS_REACHABLE",
+        "detail": "ارتباط وب‌سوکت برقرار شد (674.6ms)"
+      },
+      {
+        "name": "Cloudflare WS (Port 8443)",
+        "protocol": "V2Ray (WebSocket/TLS)",
+        "host": "104.21.5.198:8443",
+        "ok": true,
+        "latency_ms": 727.3,
+        "status": "WS_REACHABLE",
+        "detail": "ارتباط وب‌سوکت برقرار شد (727.3ms)"
+      },
+      {
+        "name": "Shadowsocks HTTPS Port (Port 443)",
+        "protocol": "Shadowsocks (AEAD)",
+        "host": "104.21.5.198:443",
+        "ok": true,
+        "latency_ms": 1035.8,
+        "status": "SS_OPEN",
+        "detail": "اتصال شادوساکس برقرار و داده تبادل شد (1035.8ms)"
+      },
+      {
+        "name": "Shadowsocks Alt (Port 8080)",
+        "protocol": "Shadowsocks (AEAD)",
+        "host": "1.1.1.1:8080",
+        "ok": true,
+        "latency_ms": 1035.9,
+        "status": "SS_OPEN",
+        "detail": "اتصال شادوساکس برقرار و داده تبادل شد (1035.9ms)"
+      },
+      {
+        "name": "Amazon (aws.amazon.com)",
+        "protocol": "Reality (TLS 1.3)",
+        "host": "54.239.28.85:443",
+        "ok": false,
+        "latency_ms": null,
+        "status": "REALITY_TIMEOUT_THROTTLED",
+        "detail": "تایم‌اوت هندشیک TLS Reality (تراتلینگ یا دراپ فایروال)"
+      },
+      {
+        "name": "Microsoft (teams.microsoft.com)",
+        "protocol": "Reality (TLS 1.3)",
+        "host": "52.114.77.33:443",
+        "ok": false,
+        "latency_ms": null,
+        "status": "REALITY_TIMEOUT_THROTTLED",
+        "detail": "تایم‌اوت هندشیک TLS Reality (تراتلینگ یا دراپ فایروال)"
+      },
+      {
+        "name": "TUIC High Port (Port 30000)",
+        "protocol": "TUIC/HighPort",
+        "host": "1.1.1.1:30000",
+        "ok": false,
+        "latency_ms": null,
+        "status": "UDP_DROPPED",
+        "detail": "تایم‌اوت UDP (مسدودسازی و بلک‌هول ترافیک UDP توسط فایروال)"
+      }
+    ],
+    "doh": [
+      {
+        "name": "Google DoH",
+        "type": "DoH",
+        "endpoint": "https://8.8.8.8/resolve",
+        "ok": true,
+        "latency_ms": 503.9,
+        "status": "DOH_ACCESSIBLE",
+        "detail": "پاسخ معتبر DoH دریافت شد (503.9ms)"
+      },
+      {
+        "name": "Quad9 DoH",
+        "type": "DoH",
+        "endpoint": "https://9.9.9.9/dns-query",
+        "ok": false,
+        "latency_ms": null,
+        "status": "HTTPError",
+        "detail": "عدم امکان اتصال به DoH (HTTPError)"
+      },
+      {
+        "name": "AdGuard DoH",
+        "type": "DoH",
+        "endpoint": "https://dns.adguard-dns.com/resolve",
+        "ok": false,
+        "latency_ms": null,
+        "status": "DOH_REFUSED",
+        "detail": "رد اتصال DoH"
+      },
+      {
+        "name": "Cloudflare DoH",
+        "type": "DoH",
+        "endpoint": "https://1.1.1.1/dns-query",
+        "ok": false,
+        "latency_ms": null,
+        "status": "DOH_TIMEOUT",
+        "detail": "تایم‌اوت استعلام DoH (فیلترینگ و دراپ پکت‌ها)"
+      }
+    ],
+    "dot": [
+      {
+        "name": "Cloudflare DoT (1.1.1.1:853)",
+        "type": "DoT",
+        "endpoint": "1.1.1.1:853",
+        "ok": true,
+        "latency_ms": 278.4,
+        "status": "DOT_ACCESSIBLE",
+        "detail": "اتصال امن DoT روی پورت ۸۵۳ برقرار شد (278.4ms)"
+      },
+      {
+        "name": "Quad9 DoT (9.9.9.9:853)",
+        "type": "DoT",
+        "endpoint": "9.9.9.9:853",
+        "ok": true,
+        "latency_ms": 282.1,
+        "status": "DOT_ACCESSIBLE",
+        "detail": "اتصال امن DoT روی پورت ۸۵۳ برقرار شد (282.1ms)"
+      },
+      {
+        "name": "Google DoT (8.8.8.8:853)",
+        "type": "DoT",
+        "endpoint": "8.8.8.8:853",
+        "ok": true,
+        "latency_ms": 321.8,
+        "status": "DOT_ACCESSIBLE",
+        "detail": "اتصال امن DoT روی پورت ۸۵۳ برقرار شد (321.8ms)"
+      },
+      {
+        "name": "AdGuard DoT (94.140.14.14:853)",
+        "type": "DoT",
+        "endpoint": "94.140.14.14:853",
+        "ok": false,
+        "latency_ms": null,
+        "status": "DOT_RST",
+        "detail": "تزریق TCP RST روی پورت ۸۵۳ DoT"
+      }
+    ],
+    "clean_ips": {
+      "reachability_percent": 100.0,
+      "working_count": 15,
+      "total_tested": 15,
+      "avg_latency_ms": 625.5,
+      "badge": "🟢 رنج‌های IP کلودفلر عمدتاً باز و تمیزند",
+      "top_clean_ips": [
+        "172.65.251.78",
+        "162.159.152.4",
+        "104.26.12.1",
+        "104.18.0.1",
+        "104.17.0.1"
+      ],
+      "results": [
+        {
+          "ip": "172.65.251.78",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 433.9,
+          "status": "OPEN"
+        },
+        {
+          "ip": "162.159.152.4",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 433.9,
+          "status": "OPEN"
+        },
+        {
+          "ip": "104.26.12.1",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 434.0,
+          "status": "OPEN"
+        },
+        {
+          "ip": "104.18.0.1",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 666.7,
+          "status": "OPEN"
+        },
+        {
+          "ip": "104.17.0.1",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 666.8,
+          "status": "OPEN"
+        },
+        {
+          "ip": "104.16.0.1",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 666.9,
+          "status": "OPEN"
+        },
+        {
+          "ip": "104.19.0.1",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 670.9,
+          "status": "OPEN"
+        },
+        {
+          "ip": "162.159.36.1",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 675.9,
+          "status": "OPEN"
+        },
+        {
+          "ip": "172.67.182.203",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 676.1,
+          "status": "OPEN"
+        },
+        {
+          "ip": "188.114.96.1",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 676.1,
+          "status": "OPEN"
+        },
+        {
+          "ip": "104.24.10.1",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 676.1,
+          "status": "OPEN"
+        },
+        {
+          "ip": "172.64.80.1",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 676.1,
+          "status": "OPEN"
+        },
+        {
+          "ip": "104.21.5.198",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 676.3,
+          "status": "OPEN"
+        },
+        {
+          "ip": "162.159.137.85",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 676.4,
+          "status": "OPEN"
+        },
+        {
+          "ip": "104.20.0.1",
+          "port": 443,
+          "ok": true,
+          "latency_ms": 676.5,
+          "status": "OPEN"
+        }
+      ]
+    }
+  },
+  "censorship_analysis": {
+    "total": 20,
+    "breakdown": {
+      "SNI_BLOCK": 0,
+      "IP_BLOCK": 0,
+      "DNS_POISONING": 0,
+      "THROTTLING": 1,
+      "TLS_ERROR": 0,
+      "NONE": 19,
+      "OTHER": 0
+    },
+    "results": [
+      {
+        "url": "https://www.libreoffice.org",
+        "domain": "www.libreoffice.org",
+        "primary_cause": "THROTTLING",
+        "cause_title": "تراتلینگ و دراپ TLS ClientHello (Throttling)",
+        "mechanism": "SNI_FILTERED_THROTTLED",
+        "detail": "تایم‌اوت TLS ClientHello به 65.109.131.19:443 (فیلترینگ یا تراتلینگ عمیق)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "65.109.131.19"
+          ],
+          "doh_ips": [
+            "65.109.131.19"
+          ],
+          "ips": [
+            "65.109.131.19"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "SNI_FILTERED_THROTTLED",
+          "tcp_ok": true,
+          "tls_sni_ok": false,
+          "target_ip": "65.109.131.19",
+          "tls_nosni_ok": false,
+          "detail": "تایم‌اوت TLS ClientHello به 65.109.131.19:443 (فیلترینگ یا تراتلینگ عمیق)"
+        }
+      },
+      {
+        "url": "https://api.anthropic.com",
+        "domain": "api.anthropic.com",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (486.8ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "160.79.104.10"
+          ],
+          "doh_ips": [
+            "160.79.104.10"
+          ],
+          "ips": [
+            "160.79.104.10"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "160.79.104.10",
+          "tcp_latency_ms": 165.2,
+          "tls_latency_ms": 486.8,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (486.8ms)"
+        }
+      },
+      {
+        "url": "https://api.openai.com",
+        "domain": "api.openai.com",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (618.3ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "162.159.140.245",
+            "172.66.0.243"
+          ],
+          "doh_ips": [
+            "162.159.140.245",
+            "172.66.0.243"
+          ],
+          "ips": [
+            "162.159.140.245",
+            "172.66.0.243"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "162.159.140.245",
+          "tcp_latency_ms": 143.1,
+          "tls_latency_ms": 618.3,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (618.3ms)"
+        }
+      },
+      {
+        "url": "https://calendar.google.com",
+        "domain": "calendar.google.com",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (751.4ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "142.251.14.138",
+            "142.251.14.100",
+            "142.251.14.139",
+            "142.251.14.113",
+            "142.251.14.102",
+            "142.251.14.101"
+          ],
+          "doh_ips": [
+            "142.250.186.14"
+          ],
+          "ips": [
+            "142.251.14.138",
+            "142.251.14.100",
+            "142.251.14.139",
+            "142.251.14.113",
+            "142.251.14.102",
+            "142.251.14.101"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "142.251.14.138",
+          "tcp_latency_ms": 782.4,
+          "tls_latency_ms": 751.4,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (751.4ms)"
+        }
+      },
+      {
+        "url": "https://chatgpt.com",
+        "domain": "chatgpt.com",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (660.0ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "172.64.155.209",
+            "104.18.32.47"
+          ],
+          "doh_ips": [
+            "172.64.155.209",
+            "104.18.32.47"
+          ],
+          "ips": [
+            "172.64.155.209",
+            "104.18.32.47"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "172.64.155.209",
+          "tcp_latency_ms": 142.2,
+          "tls_latency_ms": 660.0,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (660.0ms)"
+        }
+      },
+      {
+        "url": "https://claude.ai",
+        "domain": "claude.ai",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (623.7ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "160.79.104.10"
+          ],
+          "doh_ips": [
+            "160.79.104.10"
+          ],
+          "ips": [
+            "160.79.104.10"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "160.79.104.10",
+          "tcp_latency_ms": 80.0,
+          "tls_latency_ms": 623.7,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (623.7ms)"
+        }
+      },
+      {
+        "url": "https://developer.android.com",
+        "domain": "developer.android.com",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (278.0ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "142.250.180.14"
+          ],
+          "doh_ips": [
+            "142.250.202.238"
+          ],
+          "ips": [
+            "142.250.180.14"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "142.250.180.14",
+          "tcp_latency_ms": 37.5,
+          "tls_latency_ms": 278.0,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (278.0ms)"
+        }
+      },
+      {
+        "url": "https://platform.openai.com",
+        "domain": "platform.openai.com",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (741.3ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "172.64.154.211",
+            "104.18.33.45"
+          ],
+          "doh_ips": [
+            "104.18.33.45",
+            "172.64.154.211"
+          ],
+          "ips": [
+            "172.64.154.211",
+            "104.18.33.45"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "172.64.154.211",
+          "tcp_latency_ms": 117.1,
+          "tls_latency_ms": 741.3,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (741.3ms)"
+        }
+      },
+      {
+        "url": "https://unity.com",
+        "domain": "unity.com",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (512.7ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "2.16.168.109",
+            "2.16.168.118"
+          ],
+          "doh_ips": [
+            "23.2.13.41",
+            "23.2.13.73"
+          ],
+          "ips": [
+            "2.16.168.109",
+            "2.16.168.118"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "2.16.168.109",
+          "tcp_latency_ms": 116.3,
+          "tls_latency_ms": 512.7,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (512.7ms)"
+        }
+      },
+      {
+        "url": "https://www.cam.ac.uk",
+        "domain": "www.cam.ac.uk",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (503.3ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "23.185.0.2"
+          ],
+          "doh_ips": [
+            "23.185.0.2"
+          ],
+          "ips": [
+            "23.185.0.2"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "23.185.0.2",
+          "tcp_latency_ms": 116.7,
+          "tls_latency_ms": 503.3,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (503.3ms)"
+        }
+      },
+      {
+        "url": "https://www.columbia.edu",
+        "domain": "www.columbia.edu",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (1467.8ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "162.159.128.65",
+            "162.159.138.64"
+          ],
+          "doh_ips": [
+            "162.159.128.65",
+            "162.159.138.64"
+          ],
+          "ips": [
+            "162.159.128.65",
+            "162.159.138.64"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "162.159.128.65",
+          "tcp_latency_ms": 497.4,
+          "tls_latency_ms": 1467.8,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (1467.8ms)"
+        }
+      },
+      {
+        "url": "https://www.cornell.edu",
+        "domain": "www.cornell.edu",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (277.8ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر است (تایید هویت سرور 150.171.109.33 با TLS)",
+          "local_ips": [
+            "150.171.109.33"
+          ],
+          "doh_ips": [
+            "13.107.246.63",
+            "13.107.213.63"
+          ],
+          "ips": [
+            "150.171.109.33"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "150.171.109.33",
+          "tcp_latency_ms": 35.5,
+          "tls_latency_ms": 277.8,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (277.8ms)"
+        }
+      },
+      {
+        "url": "https://www.fedoraproject.org",
+        "domain": "www.fedoraproject.org",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (685.7ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "35.90.167.38",
+            "38.145.32.20",
+            "38.145.32.21",
+            "38.145.32.47",
+            "38.145.32.48",
+            "67.219.144.68",
+            "140.211.169.196",
+            "152.2.23.103",
+            "152.2.23.104"
+          ],
+          "doh_ips": [
+            "140.211.169.196",
+            "38.145.32.47",
+            "35.90.167.38",
+            "38.145.32.48",
+            "152.2.23.104",
+            "67.219.144.68",
+            "38.145.32.21",
+            "38.145.32.20",
+            "152.2.23.103"
+          ],
+          "ips": [
+            "35.90.167.38",
+            "38.145.32.20",
+            "38.145.32.21",
+            "38.145.32.47",
+            "38.145.32.48",
+            "67.219.144.68",
+            "140.211.169.196",
+            "152.2.23.103",
+            "152.2.23.104"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "35.90.167.38",
+          "tcp_latency_ms": 40.7,
+          "tls_latency_ms": 685.7,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (685.7ms)"
+        }
+      },
+      {
+        "url": "https://www.inkscape.org",
+        "domain": "www.inkscape.org",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (778.4ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "140.211.167.237"
+          ],
+          "doh_ips": [
+            "140.211.167.237"
+          ],
+          "ips": [
+            "140.211.167.237"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "140.211.167.237",
+          "tcp_latency_ms": 140.5,
+          "tls_latency_ms": 778.4,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (778.4ms)"
+        }
+      },
+      {
+        "url": "https://www.ox.ac.uk",
+        "domain": "www.ox.ac.uk",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (1430.2ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "104.20.34.13",
+            "172.66.169.161"
+          ],
+          "doh_ips": [
+            "104.20.34.13",
+            "172.66.169.161"
+          ],
+          "ips": [
+            "104.20.34.13",
+            "172.66.169.161"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "104.20.34.13",
+          "tcp_latency_ms": 521.0,
+          "tls_latency_ms": 1430.2,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (1430.2ms)"
+        }
+      },
+      {
+        "url": "https://www.perplexity.ai",
+        "domain": "www.perplexity.ai",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (616.4ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "104.18.26.48",
+            "104.18.27.48"
+          ],
+          "doh_ips": [
+            "104.18.27.48",
+            "104.18.26.48"
+          ],
+          "ips": [
+            "104.18.26.48",
+            "104.18.27.48"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "104.18.26.48",
+          "tcp_latency_ms": 171.2,
+          "tls_latency_ms": 616.4,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (616.4ms)"
+        }
+      },
+      {
+        "url": "https://www.princeton.edu",
+        "domain": "www.princeton.edu",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (1418.2ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "104.18.4.101",
+            "104.18.5.101"
+          ],
+          "doh_ips": [
+            "104.18.5.101",
+            "104.18.4.101"
+          ],
+          "ips": [
+            "104.18.4.101",
+            "104.18.5.101"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "104.18.4.101",
+          "tcp_latency_ms": 589.8,
+          "tls_latency_ms": 1418.2,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (1418.2ms)"
+        }
+      },
+      {
+        "url": "https://www.stanford.edu",
+        "domain": "www.stanford.edu",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (1298.4ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "15.197.167.90",
+            "3.33.186.135"
+          ],
+          "doh_ips": [
+            "15.197.167.90",
+            "3.33.186.135"
+          ],
+          "ips": [
+            "15.197.167.90",
+            "3.33.186.135"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "15.197.167.90",
+          "tcp_latency_ms": 600.8,
+          "tls_latency_ms": 1298.4,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (1298.4ms)"
+        }
+      },
+      {
+        "url": "https://www.unrealengine.com",
+        "domain": "www.unrealengine.com",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (512.6ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "104.18.20.177",
+            "104.18.21.177"
+          ],
+          "doh_ips": [
+            "104.18.20.177",
+            "104.18.21.177"
+          ],
+          "ips": [
+            "104.18.20.177",
+            "104.18.21.177"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "104.18.20.177",
+          "tcp_latency_ms": 134.4,
+          "tls_latency_ms": 512.6,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (512.6ms)"
+        }
+      },
+      {
+        "url": "https://www.virtualbox.org",
+        "domain": "www.virtualbox.org",
+        "primary_cause": "NONE",
+        "cause_title": "بدون مسدودسازی (سالم)",
+        "mechanism": "ACCESSIBLE_TLS",
+        "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (675.7ms)",
+        "dns_info": {
+          "poisoned": false,
+          "status": "CLEAN_OR_CDN",
+          "message": "پاسخ DNS معتبر به نظر می‌رسد",
+          "local_ips": [
+            "23.222.62.87"
+          ],
+          "doh_ips": [
+            "184.29.242.51"
+          ],
+          "ips": [
+            "23.222.62.87"
+          ]
+        },
+        "sni_info": {
+          "mechanism": "ACCESSIBLE_TLS",
+          "tcp_ok": true,
+          "tls_sni_ok": true,
+          "target_ip": "23.222.62.87",
+          "tcp_latency_ms": 124.8,
+          "tls_latency_ms": 675.7,
+          "detail": "اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد (675.7ms)"
+        }
+      }
+    ]
+  },
+  "quic_benchmark": {
+    "status": "QUIC_PARTIALLY_BLOCKED",
+    "badge": "🟡 فیلترینگ انتخابی یا اختلال شدید روی UDP/QUIC",
+    "summary": "پروتکل UDP تنها به برخی مقاصد اجازه عبور دارد و ترافیک بین‌المللی HTTP/3 دچار اختلال است.",
+    "quic_working": 4,
+    "tcp_working": 6,
+    "total_targets": 6,
+    "results": [
+      {
+        "name": "Google DNS (8.8.8.8)",
+        "host": "8.8.8.8",
+        "port": 443,
+        "udp_quic": {
+          "ok": true,
+          "status": "UDP_REACHABLE",
+          "latency_ms": 203.4,
+          "bytes_received": 35,
+          "detail": "پاسخ استاندارد UDP/QUIC دریافت شد (35 بایت, 203.4ms)"
+        },
+        "tcp": {
+          "ok": true,
+          "status": "TCP_CONNECTED",
+          "latency_ms": 129.9,
+          "detail": "اتصال TCP در 129.9ms برقرار شد"
+        }
+      },
+      {
+        "name": "Google Web (google.com)",
+        "host": "google.com",
+        "port": 443,
+        "udp_quic": {
+          "ok": true,
+          "status": "UDP_REACHABLE",
+          "latency_ms": 212.5,
+          "bytes_received": 35,
+          "detail": "پاسخ استاندارد UDP/QUIC دریافت شد (35 بایت, 212.5ms)"
+        },
+        "tcp": {
+          "ok": true,
+          "status": "TCP_CONNECTED",
+          "latency_ms": 169.5,
+          "detail": "اتصال TCP در 169.5ms برقرار شد"
+        }
+      },
+      {
+        "name": "Cloudflare DNS (1.1.1.1)",
+        "host": "1.1.1.1",
+        "port": 443,
+        "udp_quic": {
+          "ok": true,
+          "status": "UDP_REACHABLE",
+          "latency_ms": 212.8,
+          "bytes_received": 27,
+          "detail": "پاسخ استاندارد UDP/QUIC دریافت شد (27 بایت, 212.8ms)"
+        },
+        "tcp": {
+          "ok": true,
+          "status": "TCP_CONNECTED",
+          "latency_ms": 137.6,
+          "detail": "اتصال TCP در 137.6ms برقرار شد"
+        }
+      },
+      {
+        "name": "Cloudflare CDN",
+        "host": "cloudflare.com",
+        "port": 443,
+        "udp_quic": {
+          "ok": true,
+          "status": "UDP_REACHABLE",
+          "latency_ms": 659.5,
+          "bytes_received": 27,
+          "detail": "پاسخ استاندارد UDP/QUIC دریافت شد (27 بایت, 659.5ms)"
+        },
+        "tcp": {
+          "ok": true,
+          "status": "TCP_CONNECTED",
+          "latency_ms": 613.5,
+          "detail": "اتصال TCP در 613.5ms برقرار شد"
+        }
+      },
+      {
+        "name": "Sotoon / Domestic",
+        "host": "sotoon.ir",
+        "port": 443,
+        "udp_quic": {
+          "ok": false,
+          "status": "UDP_TIMEOUT_BLOCKED",
+          "latency_ms": null,
+          "detail": "تایم‌اوت UDP (مسدودسازی ترافیک UDP پورت ۴۴۳ / QUIC توسط فایروال)"
+        },
+        "tcp": {
+          "ok": true,
+          "status": "TCP_CONNECTED",
+          "latency_ms": 169.7,
+          "detail": "اتصال TCP در 169.7ms برقرار شد"
+        }
+      },
+      {
+        "name": "Aparat / Domestic",
+        "host": "aparat.com",
+        "port": 443,
+        "udp_quic": {
+          "ok": false,
+          "status": "UDP_TIMEOUT_BLOCKED",
+          "latency_ms": null,
+          "detail": "تایم‌اوت UDP (مسدودسازی ترافیک UDP پورت ۴۴۳ / QUIC توسط فایروال)"
+        },
+        "tcp": {
+          "ok": true,
+          "status": "TCP_CONNECTED",
+          "latency_ms": 139.3,
+          "detail": "اتصال TCP در 139.3ms برقرار شد"
+        }
+      }
+    ]
+  },
+  "categories": {
+    "موتورهای جستجو و دانشنامه‌ها": {
+      "total": 12,
+      "accessible": 8,
+      "blocked": 4,
+      "percent": 66.7,
+      "avg_latency": 2999.9
+    },
+    "دنیای متن‌باز و لینوکس": {
+      "total": 10,
+      "accessible": 9,
+      "blocked": 1,
+      "percent": 90.0,
+      "avg_latency": 2870.6
+    },
+    "زبان‌های برنامه‌نویسی و تکنولوژی": {
+      "total": 10,
+      "accessible": 10,
+      "blocked": 0,
+      "percent": 100.0,
+      "avg_latency": 3323.7
+    },
+    "سازمان‌های استاندارد و علمی": {
+      "total": 10,
+      "accessible": 5,
+      "blocked": 5,
+      "percent": 50.0,
+      "avg_latency": 2802.1
+    },
+    "ابزارها و نرم‌افزارهای کاربردی": {
+      "total": 10,
+      "accessible": 7,
+      "blocked": 3,
+      "percent": 70.0,
+      "avg_latency": 3813.1
+    },
+    "دانشگاه‌های معتبر جهانی": {
+      "total": 10,
+      "accessible": 4,
+      "blocked": 6,
+      "percent": 40.0,
+      "avg_latency": 4905.9
+    },
+    "پایگاه‌های داده و سرورها": {
+      "total": 10,
+      "accessible": 9,
+      "blocked": 1,
+      "percent": 90.0,
+      "avg_latency": 4330.6
+    },
+    "شرکت‌های سخت‌افزاری و الکترونیکی": {
+      "total": 10,
+      "accessible": 4,
+      "blocked": 6,
+      "percent": 40.0,
+      "avg_latency": 3759.7
+    },
+    "فریم‌ورک‌ها و مدیریت محتوا": {
+      "total": 10,
+      "accessible": 8,
+      "blocked": 2,
+      "percent": 80.0,
+      "avg_latency": 4818.3
+    },
+    "بازی‌سازی و گرافیک": {
+      "total": 10,
+      "accessible": 8,
+      "blocked": 2,
+      "percent": 80.0,
+      "avg_latency": 4289.9
+    },
+    "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)": {
+      "total": 14,
+      "accessible": 8,
+      "blocked": 6,
+      "percent": 57.1,
+      "avg_latency": 3676.8
+    },
+    "زیردامنه‌های کاربردی و زیرساختی گوگل": {
+      "total": 16,
+      "accessible": 13,
+      "blocked": 3,
+      "percent": 81.2,
+      "avg_latency": 7596.6
+    }
+  },
+  "results": [
+    {
+      "url": "https://www.7-zip.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2576.4,
+      "ok": true,
+      "category": "ابزارها و نرم‌افزارهای کاربردی"
+    },
+    {
+      "url": "https://www.audacityteam.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2779.3,
+      "ok": true,
+      "category": "ابزارها و نرم‌افزارهای کاربردی"
+    },
+    {
+      "url": "https://www.blender.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2073.5,
+      "ok": true,
+      "category": "ابزارها و نرم‌افزارهای کاربردی"
+    },
+    {
+      "url": "https://www.filezilla-project.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3558.5,
+      "ok": true,
+      "category": "ابزارها و نرم‌افزارهای کاربردی"
+    },
+    {
+      "url": "https://www.gimp.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 1771.5,
+      "ok": true,
+      "category": "ابزارها و نرم‌افزارهای کاربردی"
+    },
+    {
+      "url": "https://www.videolan.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 13304.0,
+      "ok": true,
+      "category": "ابزارها و نرم‌افزارهای کاربردی"
+    },
+    {
+      "url": "https://www.wireshark.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 1815.6,
+      "ok": true,
+      "category": "ابزارها و نرم‌افزارهای کاربردی"
+    },
+    {
+      "url": "https://aistudio.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 6003.2,
+      "ok": true,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://cohere.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3520.5,
+      "ok": true,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://discord.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3440.6,
+      "ok": true,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://gemini.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3497.7,
+      "ok": true,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://huggingface.co",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3756.0,
+      "ok": true,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://mistral.ai",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3258.0,
+      "ok": true,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://replicate.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3960.2,
+      "ok": true,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://www.together.ai",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 4849.2,
+      "ok": true,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://godotengine.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3129.6,
+      "ok": true,
+      "category": "بازی‌سازی و گرافیک"
+    },
+    {
+      "url": "https://vulkan.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3078.0,
+      "ok": true,
+      "category": "بازی‌سازی و گرافیک"
+    },
+    {
+      "url": "https://www.ea.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3369.9,
+      "ok": true,
+      "category": "بازی‌سازی و گرافیک"
+    },
+    {
+      "url": "https://www.khronos.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 4452.0,
+      "ok": true,
+      "category": "بازی‌سازی و گرافیک"
+    },
+    {
+      "url": "https://www.nintendo.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 6361.6,
+      "ok": true,
+      "category": "بازی‌سازی و گرافیک"
+    },
+    {
+      "url": "https://www.opengl.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2851.7,
+      "ok": true,
+      "category": "بازی‌سازی و گرافیک"
+    },
+    {
+      "url": "https://www.playstation.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 7576.6,
+      "ok": true,
+      "category": "بازی‌سازی و گرافیک"
+    },
+    {
+      "url": "https://www.xbox.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 6164.8,
+      "ok": true,
+      "category": "بازی‌سازی و گرافیک"
+    },
+    {
+      "url": "https://www.caltech.edu",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 5400.8,
+      "ok": true,
+      "category": "دانشگاه‌های معتبر جهانی"
+    },
+    {
+      "url": "https://www.harvard.edu",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3562.6,
+      "ok": true,
+      "category": "دانشگاه‌های معتبر جهانی"
+    },
+    {
+      "url": "https://www.mit.edu",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 4043.9,
+      "ok": true,
+      "category": "دانشگاه‌های معتبر جهانی"
+    },
+    {
+      "url": "https://www.yale.edu",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 11631.2,
+      "ok": true,
+      "category": "دانشگاه‌های معتبر جهانی"
+    },
+    {
+      "url": "https://www.archlinux.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 5300.3,
+      "ok": true,
+      "category": "دنیای متن‌باز و لینوکس"
+    },
+    {
+      "url": "https://www.centos.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3368.2,
+      "ok": true,
+      "category": "دنیای متن‌باز و لینوکس"
+    },
+    {
+      "url": "https://www.debian.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2172.8,
+      "ok": true,
+      "category": "دنیای متن‌باز و لینوکس"
+    },
+    {
+      "url": "https://www.freebsd.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3584.9,
+      "ok": true,
+      "category": "دنیای متن‌باز و لینوکس"
+    },
+    {
+      "url": "https://www.kernel.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2527.3,
+      "ok": true,
+      "category": "دنیای متن‌باز و لینوکس"
+    },
+    {
+      "url": "https://www.linux.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2844.5,
+      "ok": true,
+      "category": "دنیای متن‌باز و لینوکس"
+    },
+    {
+      "url": "https://www.openbsd.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 1528.2,
+      "ok": true,
+      "category": "دنیای متن‌باز و لینوکس"
+    },
+    {
+      "url": "https://www.opensuse.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 509.2,
+      "ok": true,
+      "category": "دنیای متن‌باز و لینوکس"
+    },
+    {
+      "url": "https://www.ubuntu.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 4525.2,
+      "ok": true,
+      "category": "دنیای متن‌باز و لینوکس"
+    },
+    {
+      "url": "https://go.dev",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3435.6,
+      "ok": true,
+      "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+    },
+    {
+      "url": "https://www.haskell.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3135.9,
+      "ok": true,
+      "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+    },
+    {
+      "url": "https://www.java.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 4566.0,
+      "ok": true,
+      "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+    },
+    {
+      "url": "https://www.lua.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2036.5,
+      "ok": true,
+      "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+    },
+    {
+      "url": "https://www.perl.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3459.9,
+      "ok": true,
+      "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+    },
+    {
+      "url": "https://www.php.net",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 4011.5,
+      "ok": true,
+      "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+    },
+    {
+      "url": "https://www.python.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 799.2,
+      "ok": true,
+      "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+    },
+    {
+      "url": "https://www.ruby-lang.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3257.4,
+      "ok": true,
+      "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+    },
+    {
+      "url": "https://www.rust-lang.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 5096.9,
+      "ok": true,
+      "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+    },
+    {
+      "url": "https://www.scala-lang.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3437.6,
+      "ok": true,
+      "category": "زبان‌های برنامه‌نویسی و تکنولوژی"
+    },
+    {
+      "url": "https://ajax.googleapis.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 11056.1,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://analytics.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 8025.4,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://cloud.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3298.5,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://colab.research.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 6306.3,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://console.cloud.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 8971.2,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://developers.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3650.0,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://docs.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 9657.5,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://drive.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 9282.9,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://mail.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 12212.0,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://meet.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 11943.1,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://play.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 9463.1,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://scholar.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3908.7,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://translate.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 9620.4,
+      "ok": true,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://www.cern.ch",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 6389.3,
+      "ok": true,
+      "category": "سازمان‌های استاندارد و علمی"
+    },
+    {
+      "url": "https://www.esa.int",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2061.3,
+      "ok": true,
+      "category": "سازمان‌های استاندارد و علمی"
+    },
+    {
+      "url": "https://www.iana.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2362.8,
+      "ok": true,
+      "category": "سازمان‌های استاندارد و علمی"
+    },
+    {
+      "url": "https://www.ietf.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2213.7,
+      "ok": true,
+      "category": "سازمان‌های استاندارد و علمی"
+    },
+    {
+      "url": "https://www.nasa.gov",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2045.5,
+      "ok": true,
+      "category": "سازمان‌های استاندارد و علمی"
+    },
+    {
+      "url": "https://www.asus.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 4285.1,
+      "ok": true,
+      "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+    },
+    {
+      "url": "https://www.lenovo.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 4911.7,
+      "ok": true,
+      "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+    },
+    {
+      "url": "https://www.philips.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 4594.5,
+      "ok": true,
+      "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+    },
+    {
+      "url": "https://www.samsung.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 6575.9,
+      "ok": true,
+      "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+    },
+    {
+      "url": "https://angular.io",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 7292.3,
+      "ok": true,
+      "category": "فریم‌ورک‌ها و مدیریت محتوا"
+    },
+    {
+      "url": "https://bootstrap.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 6075.1,
+      "ok": true,
+      "category": "فریم‌ورک‌ها و مدیریت محتوا"
+    },
+    {
+      "url": "https://drupal.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 6457.0,
+      "ok": true,
+      "category": "فریم‌ورک‌ها و مدیریت محتوا"
+    },
+    {
+      "url": "https://joomla.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 8644.3,
+      "ok": true,
+      "category": "فریم‌ورک‌ها و مدیریت محتوا"
+    },
+    {
+      "url": "https://jquery.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2708.7,
+      "ok": true,
+      "category": "فریم‌ورک‌ها و مدیریت محتوا"
+    },
+    {
+      "url": "https://react.dev",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2423.2,
+      "ok": true,
+      "category": "فریم‌ورک‌ها و مدیریت محتوا"
+    },
+    {
+      "url": "https://vuejs.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2601.6,
+      "ok": true,
+      "category": "فریم‌ورک‌ها و مدیریت محتوا"
+    },
+    {
+      "url": "https://wordpress.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2979.2,
+      "ok": true,
+      "category": "فریم‌ورک‌ها و مدیریت محتوا"
+    },
+    {
+      "url": "https://lineageos.org/",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2894.2,
+      "ok": true,
+      "category": "موتورهای جستجو و دانشنامه‌ها"
+    },
+    {
+      "url": "https://www.bing.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 655.8,
+      "ok": true,
+      "category": "موتورهای جستجو و دانشنامه‌ها"
+    },
+    {
+      "url": "https://www.dictionary.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2991.8,
+      "ok": true,
+      "category": "موتورهای جستجو و دانشنامه‌ها"
+    },
+    {
+      "url": "https://www.google.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 901.7,
+      "ok": true,
+      "category": "موتورهای جستجو و دانشنامه‌ها"
+    },
+    {
+      "url": "https://www.thesaurus.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2241.6,
+      "ok": true,
+      "category": "موتورهای جستجو و دانشنامه‌ها"
+    },
+    {
+      "url": "https://www.weather.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 8002.7,
+      "ok": true,
+      "category": "موتورهای جستجو و دانشنامه‌ها"
+    },
+    {
+      "url": "https://www.wikipedia.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2152.4,
+      "ok": true,
+      "category": "موتورهای جستجو و دانشنامه‌ها"
+    },
+    {
+      "url": "https://www.yahoo.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2966.2,
+      "ok": true,
+      "category": "موتورهای جستجو و دانشنامه‌ها"
+    },
+    {
+      "url": "https://www.apache.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3396.5,
+      "ok": true,
+      "category": "پایگاه‌های داده و سرورها"
+    },
+    {
+      "url": "https://www.haproxy.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3506.3,
+      "ok": true,
+      "category": "پایگاه‌های داده و سرورها"
+    },
+    {
+      "url": "https://www.lighttpd.net",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 2386.3,
+      "ok": true,
+      "category": "پایگاه‌های داده و سرورها"
+    },
+    {
+      "url": "https://www.mariadb.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 5423.7,
+      "ok": true,
+      "category": "پایگاه‌های داده و سرورها"
+    },
+    {
+      "url": "https://www.mongodb.com",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 4531.0,
+      "ok": true,
+      "category": "پایگاه‌های داده و سرورها"
+    },
+    {
+      "url": "https://www.nginx.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 6805.9,
+      "ok": true,
+      "category": "پایگاه‌های داده و سرورها"
+    },
+    {
+      "url": "https://www.postgresql.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 4505.3,
+      "ok": true,
+      "category": "پایگاه‌های داده و سرورها"
+    },
+    {
+      "url": "https://www.redis.io",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 5785.9,
+      "ok": true,
+      "category": "پایگاه‌های داده و سرورها"
+    },
+    {
+      "url": "https://www.sqlite.org",
+      "status": "باز (Available)",
+      "code": 200,
+      "latency": 3541.8,
+      "ok": true,
+      "category": "پایگاه‌های داده و سرورها"
+    },
+    {
+      "url": "https://www.inkscape.org",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 3763.7,
+      "ok": false,
+      "category": "ابزارها و نرم‌افزارهای کاربردی"
+    },
+    {
+      "url": "https://www.libreoffice.org",
+      "status": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)",
+      "code": "TLS_TIMEOUT",
+      "latency": null,
+      "ok": false,
+      "category": "ابزارها و نرم‌افزارهای کاربردی"
+    },
+    {
+      "url": "https://www.virtualbox.org",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2675.1,
+      "ok": false,
+      "category": "ابزارها و نرم‌افزارهای کاربردی"
+    },
+    {
+      "url": "https://api.anthropic.com",
+      "status": "خطا (HTTP 404)",
+      "code": 404,
+      "latency": 3050.7,
+      "ok": false,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://api.openai.com",
+      "status": "خطا (HTTP 421)",
+      "code": 421,
+      "latency": 3979.2,
+      "ok": false,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://chatgpt.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2243.9,
+      "ok": false,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://claude.ai",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2152.7,
+      "ok": false,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://platform.openai.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 4759.6,
+      "ok": false,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://www.perplexity.ai",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 3003.7,
+      "ok": false,
+      "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)"
+    },
+    {
+      "url": "https://unity.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2904.1,
+      "ok": false,
+      "category": "بازی‌سازی و گرافیک"
+    },
+    {
+      "url": "https://www.unrealengine.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 3010.5,
+      "ok": false,
+      "category": "بازی‌سازی و گرافیک"
+    },
+    {
+      "url": "https://www.cam.ac.uk",
+      "status": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)",
+      "code": "TLS_TIMEOUT",
+      "latency": null,
+      "ok": false,
+      "category": "دانشگاه‌های معتبر جهانی"
+    },
+    {
+      "url": "https://www.columbia.edu",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 3080.7,
+      "ok": false,
+      "category": "دانشگاه‌های معتبر جهانی"
+    },
+    {
+      "url": "https://www.cornell.edu",
+      "status": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)",
+      "code": "TLS_TIMEOUT",
+      "latency": null,
+      "ok": false,
+      "category": "دانشگاه‌های معتبر جهانی"
+    },
+    {
+      "url": "https://www.ox.ac.uk",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2976.7,
+      "ok": false,
+      "category": "دانشگاه‌های معتبر جهانی"
+    },
+    {
+      "url": "https://www.princeton.edu",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 3645.1,
+      "ok": false,
+      "category": "دانشگاه‌های معتبر جهانی"
+    },
+    {
+      "url": "https://www.stanford.edu",
+      "status": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)",
+      "code": "TLS_TIMEOUT",
+      "latency": null,
+      "ok": false,
+      "category": "دانشگاه‌های معتبر جهانی"
+    },
+    {
+      "url": "https://www.fedoraproject.org",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2345.3,
+      "ok": false,
+      "category": "دنیای متن‌باز و لینوکس"
+    },
+    {
+      "url": "https://calendar.google.com",
+      "status": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)",
+      "code": "TLS_TIMEOUT",
+      "latency": null,
+      "ok": false,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://developer.android.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 3508.3,
+      "ok": false,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://fonts.googleapis.com",
+      "status": "خطا (HTTP 404)",
+      "code": 404,
+      "latency": 3045.0,
+      "ok": false,
+      "category": "زیردامنه‌های کاربردی و زیرساختی گوگل"
+    },
+    {
+      "url": "https://www.acm.org",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2622.8,
+      "ok": false,
+      "category": "سازمان‌های استاندارد و علمی"
+    },
+    {
+      "url": "https://www.icann.org",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2381.9,
+      "ok": false,
+      "category": "سازمان‌های استاندارد و علمی"
+    },
+    {
+      "url": "https://www.ieee.org",
+      "status": "خطا (HTTP 202)",
+      "code": 202,
+      "latency": 2803.7,
+      "ok": false,
+      "category": "سازمان‌های استاندارد و علمی"
+    },
+    {
+      "url": "https://www.iso.org",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2225.4,
+      "ok": false,
+      "category": "سازمان‌های استاندارد و علمی"
+    },
+    {
+      "url": "https://www.w3.org",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2914.8,
+      "ok": false,
+      "category": "سازمان‌های استاندارد و علمی"
+    },
+    {
+      "url": "https://www.bosch.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 3190.8,
+      "ok": false,
+      "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+    },
+    {
+      "url": "https://www.gigabyte.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2814.2,
+      "ok": false,
+      "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+    },
+    {
+      "url": "https://www.lg.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2730.9,
+      "ok": false,
+      "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+    },
+    {
+      "url": "https://www.msi.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 3242.9,
+      "ok": false,
+      "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+    },
+    {
+      "url": "https://www.panasonic.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2772.5,
+      "ok": false,
+      "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+    },
+    {
+      "url": "https://www.sony.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 2478.6,
+      "ok": false,
+      "category": "شرکت‌های سخت‌افزاری و الکترونیکی"
+    },
+    {
+      "url": "https://magento.com",
+      "status": "تایم‌اوت اتصال (Timeout)",
+      "code": "TIMEOUT",
+      "latency": null,
+      "ok": false,
+      "category": "فریم‌ورک‌ها و مدیریت محتوا"
+    },
+    {
+      "url": "https://moodle.org",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 4183.2,
+      "ok": false,
+      "category": "فریم‌ورک‌ها و مدیریت محتوا"
+    },
+    {
+      "url": "https://www.accuweather.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 3301.2,
+      "ok": false,
+      "category": "موتورهای جستجو و دانشنامه‌ها"
+    },
+    {
+      "url": "https://www.britannica.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 3036.1,
+      "ok": false,
+      "category": "موتورهای جستجو و دانشنامه‌ها"
+    },
+    {
+      "url": "https://www.imdb.com",
+      "status": "خطا (HTTP 202)",
+      "code": 202,
+      "latency": 3567.7,
+      "ok": false,
+      "category": "موتورهای جستجو و دانشنامه‌ها"
+    },
+    {
+      "url": "https://www.timeanddate.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 3287.5,
+      "ok": false,
+      "category": "موتورهای جستجو و دانشنامه‌ها"
+    },
+    {
+      "url": "https://www.mysql.com",
+      "status": "خطا (HTTP 403)",
+      "code": 403,
+      "latency": 3423.1,
+      "ok": false,
+      "category": "پایگاه‌های داده و سرورها"
+    }
+  ],
+  "summary": {
+    "total": 132,
+    "accessible": 93,
+    "blocked": 39,
+    "accessible_percent": 70.5,
+    "avg_latency_ms": 4581.6,
+    "isp": "افرانیک / افرانت (Afranet)",
+    "asn": "AS25184",
+    "ip": "79.175.181.227"
+  }
+}

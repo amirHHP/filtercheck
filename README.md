@@ -1,43 +1,126 @@
-# Proxy Connectivity Checker
+# 📡 Internet Censorship, Connectivity & Quality Monitoring Suite (FilterCheck)
 
-A multi-threaded, high-performance, zero-dependency Python script to verify the connectivity, latency, and anonymity of free proxies from the [free-proxy-list](https://github.com/iplocate/free-proxy-list) repository.
+یک سامانه جامع، مدرن و **بدون وابستگی خارجی (Zero-Dependency)** مبتنی بر پایتون ۳ استاندارد برای پایش همه‌جانبه، ریشه‌یابی تکنیکال فیلترینگ، سنجش کیفیت خط و ارزیابی پروتکل‌های عبور از سد فیلترینگ در ایران.
 
-## Features
+---
 
-- **Multi-threaded**: Processes thousands of proxies concurrently using Python's thread pool.
-- **Zero Dependencies**: Built entirely using Python's standard library (no need to `pip install` any third-party library).
-- **Comprehensive Protocol Support**: Implements low-level socket handshakes for **HTTP**, **HTTPS (CONNECT)**, **SOCKS4**, and **SOCKS5**.
-- **Flexible Targets**: Test proxies against Cloudflare connectivity, Google bypass capability, GeoIP location resolution, or custom URLs.
-- **GeoIP Lookup & Anonymity Verification**: Automatically resolves country, city, and ISP for working proxies when checking against `ip-api.com`.
-- **Live Terminal UI**: Shows real-time progress bar, speed (proxies/sec), and working count.
-- **Auto-Save**: Saves verified working proxies sorted by latency to a file (default `working_proxies.txt`).
+## 🌟 قابلیت‌های کلیدی و ماژول‌های ۶ گانه
 
-## How to Run
+### ۱. تفکیک لایه‌ای فیلترینگ و ریشه‌یابی تکنیکال (Censorship Root-Cause Analysis)
+- **تشخیص آلودگی و تزریق DNS (DNS Poisoning & Spoofing):** مقایسه پاسخ DNS سیستم با DNS-over-HTTPS مطمئن جهانی (Google 8.8.8.8 و Cloudflare 1.1.1.1) برای تشخیص پاسخ‌های جعلی، هدایت به رنج‌های لوکال پیوندها (`10.10.34.x`) یا تزریق NXDOMAIN.
+- **تفکیک مسدودسازی SNI در برابر فیلترینگ مستقیم IP:** تحلیل دقیق سه مرحله‌ای (TCP SYN خالص، TLS ClientHello با ارسال SNI واقعی، و TLS بدون SNI یا دامنه خنثی) برای تعیین نوع فیلترینگ.
+- **تفکیک تزریق پکت TCP RST در برابر دراپ خاموش و تایم‌اوت:** شناسایی فایروال‌های فعال DPI با مشاهده تزریق بسته‌های Reset در لحظه مذاکره.
+- **بررسی تطبیقی مسدودسازی UDP/QUIC (HTTP/3) در برابر TCP:** ارسال پکت‌های RFC 9000 QUIC Initial برای تعیین اینکه آیا پروتکل پرسرعت HTTP/3 در شبکه به کلی مسدود است یا خیر.
 
-1. Run the script:
-   ```bash
-   python3 check.py
-   ```
+### ۲. سنجش کیفیت، پایداری و افت خط (QoS & Performance Metrics)
+- **محاسبه نرخ افت پکت (Packet Loss) و جیتر (Jitter):** پینگ چندمرحله‌ای به اهداف منتخب داخلی و بین‌الملل و محاسبه میانگین تاخیر، نوسان پکت‌ها (Jitter بر مبنای RFC 3550) و درصد پکت‌لاس.
+- **کاوش و سنجش تراتلینگ پهنای باند (Bandwidth Throttling Probe):** دانلود فایل‌های نمونه از CDNهای معتبر جهانی (Cloudflare، AWS CloudFront، Wikimedia) و مقایسه با CDNهای داخلی برای کشف تراتلینگ عمدی پهنای باند بین‌الملل.
+- **بازرسی گام‌به‌گام هاپ‌های روتینگ (Traceroute Hop Inspection):** ردیابی مسیر بسته‌ها و تشخیص دقیق گره بروز قطعی (مودم محلی، هسته شبکه ISP، درگاه فیلترینگ شرکت ارتباطات زیرساخت AS12880 یا شبکه‌های ترانزیت خارجی).
 
-2. The script will prompt you to:
-   - Select proxy list type to download (All, HTTP, HTTPS, SOCKS4, SOCKS5).
-   - Select the target URL to test connectivity (Cloudflare, GeoIP, Google, or Custom URL).
+### ۳. تفکیک هویت شبکه و شاخص اینترنت ملی (Network Identity & Intranet Index)
+- **شناسایی خودکار هویت شبکه:** تشخیص خودکار آی‌پی عمومی، ASN، موقعیت جغرافیایی و نگاشت به اپراتورهای ایرانی (همراه اول، ایرانسل، شاتل، مخابرات، ابر ستون، افرانت، آسیاتک، رایتل، مبین‌نت، رسپینا، های‌وب، زیتل و زیرساخت TIC).
+- **شاخص اینترنت ملی (Intranet vs Internet Ratio):** بنچمارک موازی ۲۰ سرویس حیاتی داخلی در برابر ۲۰ سرویس بین‌المللی، محاسبه نسبت دسترسی، و تشخیص ورود شبکه به وضعیت **قفل اینترنت ملی (National Intranet Lockdown Mode)**.
 
-### Command Line Options
+### ۴. پایش پروتکل‌های نوین دور زدن فیلترینگ (Circumvention Protocols Benchmark)
+- **پروتکل‌های مدرن:** تست ارتباط، هندشیک و پورت‌های پروتکل‌های V2Ray (VMess/VLESS عبر WebSocket/TLS)، Reality (TLS 1.3)، Shadowsocks، Hysteria2 و TUIC.
+- **دی‌ان‌اس رمزنگاری‌شده:** سنجش دسترسی به سرورهای DNS-over-HTTPS (DoH) و DNS-over-TLS (DoT پورت ۸۵۳).
+- **کاوش آی‌پی‌های تمیز کلودفلر (Cloudflare Clean IPs):** تست پورت ۴۴۳ روی ۱۵ رنج آی‌پی منتخب Anycast کلودفلر، محاسبه درصد سلامت و استخراج سریع‌ترین آی‌پی‌های تمیز شبکه.
 
-You can also run the checker directly from the command line with options:
+### ۵. داشبورد بصری تعاملی (Interactive Standalone HTML Dashboard)
+- تولید خودکار فایل تک‌سندی و ریسپانسیو `reports/dashboard.html` با استایل مدرن دارک (Cyberpunk / Telecom Monitoring):
+  - گیج شعاعی نمره سلامت اینترنت (Health Score 0-100)
+  - نمودار میله‌ای تفکیک دسترسی دسته‌بندی وب‌سایت‌ها
+  - نمودار دونات علل ریشه‌ای سانسور (SNI vs IP vs DNS vs TLS)
+  - کارت‌های KPI وضعیت شبکه ملی، جیتر، پکت‌لاس و سرعت
+  - جدول تعاملی کلیه سرویس‌ها با قابلیت **جستجوی آنی**، **فیلتر وضعیت** و **فیلتر دسته‌بندی**.
 
+### ۶. پایش مداوم و اتوماسیون (Scheduled Watch / Daemon Mode)
+- اجرای تکرارشونده و زمان‌بندی‌شده با سوییچ `--watch <interval_seconds>`.
+- تحلیل روند تغییرات و مقایسه تفاضلی با `compare_reports.py`.
+
+---
+
+## 🚀 راهنمای اجرا
+
+### ۱. اجرای آزمون یکپارچه جامع و تولید داشبورد (Run Full Suite)
 ```bash
-# Check SOCKS5 proxies against Google with 100 threads and 3 seconds timeout
-python3 check.py --type socks5 --target https://www.google.com/ --threads 100 --timeout 3 --output working_socks5.txt
-
-# Check HTTP proxies with default settings
-python3 check.py --type http
+python3 run_suite.py
+```
+یا با مقایسه خودکار با آخرین گزارش قبلی:
+```bash
+python3 run_suite.py --compare
 ```
 
-### Options Reference
-- `--type`: `all`, `http`, `https`, `socks4`, `socks5` (default: asks interactively)
-- `--target`: URL to check connectivity (default: asks interactively)
-- `--threads`: Number of concurrent threads (default: `80`)
-- `--timeout`: Timeout in seconds for each proxy connection (default: `4`)
-- `--output`: File name to save working proxies to (default: `working_proxies.txt`)
+پس از اتمام، فایل‌های زیر به روزرسانی می‌شوند:
+- `reports/dashboard.html` (داشبورد بصری تعاملی)
+- `reports/latest.json` (داده‌های ساختاریافته)
+- `reports/latest.md` (گزارش متنی فرمت Markdown)
+
+### ۲. پایش پیوسته شبانه‌روزی (Watch Mode)
+برای رصد دائمی شبکه با فاصله زمانی مشخص (مثلاً هر ۶۰ ثانیه یک بار):
+```bash
+python3 run_suite.py --watch 60
+```
+در این حالت، در هر دور علاوه بر به‌روزرسانی داشبورد، تغییرات رخ‌داده (سایت‌های تازه مسدود شده یا تازه باز شده، تغییر اپراتور، نوسان پینگ) در کنسول گزارش می‌شود.
+
+### ۳. مقایسه دو گزارش پایش (Diff Analysis)
+```bash
+# مقایسه خودکار دو گزارش آخر ذخیره شده
+python3 compare_reports.py
+
+# مقایسه دو فایل دلخواه
+python3 compare_reports.py reports/report_1.json reports/report_2.json
+
+# دریافت خروجی ساختاریافته JSON برای پایپ‌لاین‌ها
+python3 compare_reports.py --json
+```
+
+### ۴. اجرای مجزای هر ماژول
+- **ریشه‌یابی فیلترینگ و بررسی UDP/QUIC:**
+  ```bash
+  python3 censorship_probe.py
+  ```
+- **سنجش کیفیت خط، جیتر، تراتلینگ و Traceroute:**
+  ```bash
+  python3 qos_metrics.py
+  ```
+- **بررسی هویت شبکه و شاخص اینترنت ملی:**
+  ```bash
+  python3 network_identity.py
+  ```
+- **تست پروتکل‌های ضد فیلتر و آی‌پی‌های تمیز کلودفلر:**
+  ```bash
+  python3 circumvention_benchmark.py
+  ```
+- **پایش ۱۳۲ وب‌سایت در ۱۲ دسته‌بندی تخصصی:**
+  ```bash
+  python3 filtercheck.py
+  ```
+- **چکر چندتردی پروکسی‌ها و کانفیگ‌های VPN Gate:**
+  ```bash
+  python3 check.py
+  ```
+
+---
+
+## 🛠️ ساختار فایل‌های پروژه
+
+```
+.
+├── run_suite.py                 # ارکستراتور اصلی و هماهنگ‌کننده کلیه آزمون‌ها
+├── censorship_probe.py          # ماژول ریشه‌یابی تکنیکال سانسور و مقایسه DoH
+├── qos_metrics.py               # ماژول سنجش پایداری، جیتر، پکت‌لاس، تراتلینگ و تریس‌روت
+├── network_identity.py          # ماژول هویت شبکه، شناسایی ISP و شاخص اینترنت ملی
+├── circumvention_benchmark.py   # بنچمارک Reality، V2Ray، Hysteria، DoH/DoT و Clean IPs
+├── dashboard_generator.py       # تولیدکننده داشبورد بصری HTML تعاملی
+├── compare_reports.py           # ابزار مقایسه دو گزارش و استخراج روند تغییرات
+├── filtercheck.py               # آزمون دسترسی وب‌سایت‌ها در ۱۲ دسته‌بندی
+├── check.py                     # چکر پروکسی‌ها، VPN App APIها و کانفیگ‌های OVPN
+├── reports/                     # پوشه ذخیره تاریخچه، فایل‌های latest و dashboard.html
+└── README.md                    # مستندات و راهنمای کامل
+```
+
+## 💡 اصول طراحی (Design Philosophy)
+- **Zero-Dependency**: بدون نیاز به نصب هرگونه پکیج شخص ثالث (`pip install`). تنها نیاز سیستم مجهز بودن به پایتون ۳ استاندارد است.
+- **High Concurrency**: بهره‌گیری از `concurrent.futures.ThreadPoolExecutor` برای اجرای موازی و تکمیل تست‌ها در کمتر از ۱ دقیقه.
+- **Fail-Safe & Resilient**: مقاوم در برابر قطعی‌های شدید، خطاهای شبکه و بسته‌شدن ارتباطات.

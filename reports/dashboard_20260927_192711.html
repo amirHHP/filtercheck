@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد جامع پایش و سلامت اینترنت | 2026-09-27 19:27:11</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-base: #0b0f19;
+            --bg-surface: #111827;
+            --bg-card: #1f2937;
+            --bg-card-hover: #283548;
+            --border-color: #374151;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #8b5cf6;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 24px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        /* Header & Identity */
+        header {
+            background: linear-gradient(180deg, rgba(31, 41, 55, 0.7) 0%, rgba(17, 24, 39, 0.9) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .header-title h1 {
+            font-size: 26px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header-title p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .identity-badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .id-badge {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+        .id-badge span.label {
+            color: var(--text-muted);
+            margin-left: 6px;
+        }
+        .id-badge span.value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .kpi-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+        }
+        .kpi-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 8px 0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .kpi-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Health & Gauge Section */
+        .overview-section {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 992px) {
+            .overview-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        .health-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .radial-gauge {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 16px 0;
+        }
+        .radial-gauge svg {
+            transform: rotate(-90deg);
+        }
+        .radial-gauge circle {
+            fill: none;
+            stroke-width: 14;
+        }
+        .gauge-bg {
+            stroke: #1f2937;
+        }
+        .gauge-bar {
+            stroke: #f59e0b;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 127.60000000000002;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+        .gauge-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 38px;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+        .health-badge {
+            background: rgba(31, 41, 55, 0.9);
+            border: 1px solid #f59e0b;
+            color: #f59e0b;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 900px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .chart-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .chart-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .chart-container {
+            position: relative;
+            height: 280px;
+            width: 100%;
+        }
+
+        /* Protocols & Routing Grid */
+        .info-panels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        .panel-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .panel-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: rgba(31, 41, 55, 0.5);
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .badge-pill {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .badge-fail { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .badge-warn { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+        /* Interactive Table */
+        .table-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .table-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+        .filter-select {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 13px;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: right;
+        }
+        th, td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th {
+            background: rgba(31, 41, 55, 0.7);
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+        tr:hover td {
+            background: var(--bg-card-hover);
+        }
+        .monospace {
+            font-family: 'JetBrains Mono', monospace;
+            direction: ltr;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-title">
+                <h1>📡 داشبورد پایش هوشمند وضعیت اینترنت و فیلترینگ</h1>
+                <p>گزارش تفکیکی کیفیت، سانسور، پروتکل‌های عبور از سد فیلترینگ و شاخص اینترنت ملی</p>
+            </div>
+            <div class="identity-badge-group">
+                <div class="id-badge">
+                    <span class="label">اپراتور (ISP):</span>
+                    <span class="value" style="color: var(--accent-cyan);">افرانیک / افرانت (Afranet)</span>
+                </div>
+                <div class="id-badge">
+                    <span class="label">ASN:</span>
+                    <span class="value">AS25184</span>
+                </div>
+                <div class="id-badge">
+                    <span class="label">آی‌پی عمومی:</span>
+                    <span class="value">79.175.181.227</span>
+                </div>
+                <div class="id-badge">
+                    <span class="label">موقعیت:</span>
+                    <span class="value">Tehran, Iran</span>
+                </div>
+                <div class="id-badge">
+                    <span class="label">زمان تست:</span>
+                    <span class="value">2026-09-27 19:27:11</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- KPI Grid -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <span class="kpi-title">دسترسی وب‌سایت‌های بین‌الملل</span>
+                <span class="kpi-value" style="color: #10b981;">72.7%</span>
+                <span class="kpi-sub">96 از 132 سرویس جهانی</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-title">شاخص اینترنت ملی (Ratio)</span>
+                <span class="kpi-value" style="color: #f59e0b;">2.22x</span>
+                <span class="kpi-sub">داخلی 100.0% | خارجی 45.0%</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-title">پایداری خط و جیتر (Jitter)</span>
+                <span class="kpi-value" style="color: #10b981;">30.1ms</span>
+                <span class="kpi-sub">پکت‌لاس بین‌الملل: 0%</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-title">پهنای باند خارجی (Speed)</span>
+                <span class="kpi-value" style="color: #ef4444;">0.62 <small style="font-size:14px;">Mbps</small></span>
+                <span class="kpi-sub">داخلی: 2.25 Mbps</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-title">آی‌پی‌های تمیز کلودفلر</span>
+                <span class="kpi-value" style="color: #10b981;">100.0%</span>
+                <span class="kpi-sub">15 از 15 آی‌پی در دسترس</span>
+            </div>
+        </div>
+
+        <!-- Overview Section (Health Gauge + Status Details) -->
+        <div class="overview-section">
+            <div class="health-card">
+                <span class="kpi-title">شاخص کل سلامت اینترنت</span>
+                <div class="radial-gauge">
+                    <svg width="180" height="180">
+                        <circle class="gauge-bg" cx="90" cy="90" r="70"></circle>
+                        <circle class="gauge-bar" cx="90" cy="90" r="70"></circle>
+                    </svg>
+                    <div class="gauge-text">71.0</div>
+                </div>
+                <div class="health-badge">🟡 فیلترینگ گسترده و اختلالات پروتکلی / تراتلینگ فعال</div>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">ترکیبی از وب، DNS، ضد فیلتر و افت خط</p>
+            </div>
+
+            <div class="panel-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <h3>🔎 وضعیت ساختاری و تفکیک لایه‌ای شبکه</h3>
+                    <div style="margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+                        <div class="list-item">
+                            <span>وضعیت پروتکل UDP / HTTP/3:</span>
+                            <span class="badge-pill badge-fail">🔴 مسدودسازی کامل پروتکل UDP / HTTP/3</span>
+                        </div>
+                        <div class="list-item">
+                            <span>ارزیابی تراتلینگ پهنای باند:</span>
+                            <span class="badge-pill badge-success">🟢 سرعت تبادل اطلاعات مناسب و بدون تراتلینگ حاد</span>
+                        </div>
+                        <div class="list-item">
+                            <span>شاخص قفل ملی (Lockdown):</span>
+                            <span class="badge-pill badge-warn">🟡 فیلترینگ گسترده و تفکیک شدید ترافیک داخلی/خارجی</span>
+                        </div>
+                        <div class="list-item">
+                            <span>بازرسی هاپ‌های روتینگ (Traceroute):</span>
+                            <span class="badge-pill badge-success">🟢 روتینگ سالم تا مقصد</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="background: rgba(31, 41, 55, 0.4); border: 1px dashed var(--border-color); border-radius: 10px; padding: 12px 16px; margin-top: 16px; font-size: 13px;">
+                    <strong>تشخیص مسیر Traceroute:</strong> مسیر تا مقصد نهایی (1.1.1.1) کاملاً باز و بدون قطعی است (11 هاپ).
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>📊 درصد دسترسی بر اساس دسته‌بندی وب‌سایت‌ها</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>🛡️ تفکیک علل ریشه‌ای فیلترینگ (Censorship Breakdown)</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="censorshipChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Protocols & Routing Panels -->
+        <div class="info-panels-grid">
+            <div class="panel-card">
+                <h3>🚀 پروتکل‌های نوین ضد فیلتر</h3>
+                <div class="list-item">
+                    <span>پروتکل Reality (TLS 1.3):</span>
+                    <span class="badge-pill badge-success">
+                        فعال
+                    </span>
+                </div>
+                <div class="list-item">
+                    <span>پروتکل V2Ray (WebSocket / CDN):</span>
+                    <span class="badge-pill badge-success">
+                        در دسترس
+                    </span>
+                </div>
+                <div class="list-item">
+                    <span>پروتکل‌های UDP (Hysteria2 / TUIC):</span>
+                    <span class="badge-pill badge-fail">
+                        مسدود / بلک‌هول
+                    </span>
+                </div>
+                <div class="list-item">
+                    <span>پروتکل DNS-over-TLS (پورت ۸۵۳):</span>
+                    <span class="badge-pill badge-success">3 از 4 سرور باز</span>
+                </div>
+                <div class="list-item">
+                    <span>پروتکل DNS-over-HTTPS (DoH):</span>
+                    <span class="badge-pill badge-success">1 از 4 سرور باز</span>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <h3>🌐 سریع‌ترین آی‌پی‌های تمیز کلودفلر</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">آی‌پی‌هایی که پورت ۴۴۳ آن‌ها باز بوده و پکت‌لاس ندارند:</p>
+                <div class="list-item"><span class="monospace">104.17.0.1</span><span class="badge-pill badge-success">Port 443 OK</span></div><div class="list-item"><span class="monospace">104.16.0.1</span><span class="badge-pill badge-success">Port 443 OK</span></div><div class="list-item"><span class="monospace">104.18.0.1</span><span class="badge-pill badge-success">Port 443 OK</span></div><div class="list-item"><span class="monospace">172.64.80.1</span><span class="badge-pill badge-success">Port 443 OK</span></div><div class="list-item"><span class="monospace">188.114.96.1</span><span class="badge-pill badge-success">Port 443 OK</span></div>
+            </div>
+
+            <div class="panel-card">
+                <h3>🗺️ تحلیل گام‌به‌گام هاپ‌های مسیر (Traceroute)</h3>
+                <div style="max-height: 240px; overflow-y: auto;">
+                    <div class="list-item"><span class="monospace">Hop 2: 10.0.100.1</span><span class="badge-pill badge-success">492.908ms (مودم / روتر محلی کاربر)</span></div><div class="list-item"><span class="monospace">Hop 3: 79.175.181.253</span><span class="badge-pill badge-success">29.387ms (هسته شبکه اپراتور اینترنت (ISP Core))</span></div><div class="list-item"><span class="monospace">Hop 4: 172.19.190.93</span><span class="badge-pill badge-success">43.078ms (هسته شبکه اپراتور اینترنت (ISP Core))</span></div><div class="list-item"><span class="monospace">Hop 5: 172.26.0.33</span><span class="badge-pill badge-success">35.302ms (هسته شبکه اپراتور اینترنت (ISP Core))</span></div><div class="list-item"><span class="monospace">Hop 6: 172.28.0.253</span><span class="badge-pill badge-success">37.156ms (هسته شبکه اپراتور اینترنت (ISP Core))</span></div><div class="list-item"><span class="monospace">Hop 7: 172.22.5.1</span><span class="badge-pill badge-success">35.403ms (شبکه ترانزیت بین‌الملل (Tier-1 Transit))</span></div><div class="list-item"><span class="monospace">Hop 8: 217.11.30.222</span><span class="badge-pill badge-success">51.436ms (درگاه فیلترینگ و مرز شرکت ارتباطات زیرساخت (TIC AS12880))</span></div><div class="list-item"><span class="monospace">Hop 9: 10.202.7.122</span><span class="badge-pill badge-success">48.71ms (درگاه فیلترینگ و مرز شرکت ارتباطات زیرساخت (TIC AS12880))</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Table Section -->
+        <div class="table-section">
+            <div class="table-controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 جستجوی وب‌سایت، دامنه یا وضعیت..." onkeyup="filterTable()">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <select id="statusFilter" class="filter-select" onchange="filterTable()">
+                        <option value="ALL">همه وضعیت‌ها</option>
+                        <option value="OK">فقط باز و در دسترس</option>
+                        <option value="BLOCKED">فقط مسدود یا خطادار</option>
+                    </select>
+                    <select id="categoryFilter" class="filter-select" onchange="filterTable()">
+                        <option value="ALL">همه دسته‌بندی‌ها</option>
+                        <option value="موتورهای جستجو و دانشنامه‌ها">موتورهای جستجو و دانشنامه‌ها</option><option value="دنیای متن‌باز و لینوکس">دنیای متن‌باز و لینوکس</option><option value="زبان‌های برنامه‌نویسی و تکنولوژی">زبان‌های برنامه‌نویسی و تکنولوژی</option><option value="سازمان‌های استاندارد و علمی">سازمان‌های استاندارد و علمی</option><option value="ابزارها و نرم‌افزارهای کاربردی">ابزارها و نرم‌افزارهای کاربردی</option><option value="دانشگاه‌های معتبر جهانی">دانشگاه‌های معتبر جهانی</option><option value="پایگاه‌های داده و سرورها">پایگاه‌های داده و سرورها</option><option value="شرکت‌های سخت‌افزاری و الکترونیکی">شرکت‌های سخت‌افزاری و الکترونیکی</option><option value="فریم‌ورک‌ها و مدیریت محتوا">فریم‌ورک‌ها و مدیریت محتوا</option><option value="بازی‌سازی و گرافیک">بازی‌سازی و گرافیک</option><option value="ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)">ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)</option><option value="زیردامنه‌های کاربردی و زیرساختی گوگل">زیردامنه‌های کاربردی و زیرساختی گوگل</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table id="servicesTable">
+                    <thead>
+                        <tr>
+                            <th>آدرس وب‌سایت</th>
+                            <th>دسته‌بندی</th>
+                            <th>وضعیت دسترسی</th>
+                            <th>کد HTTP</th>
+                            <th>تاخیر (پینگ)</th>
+                            <th>جزئیات خطای مشاهده شده</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- جاوااسکریپت به صورت پویا این جدول را رندر می‌کند -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script for Dynamic Charts & Table Filtering -->
+    <script>
+        const tableData = [{"url": "https://www.7-zip.org", "category": "ابزارها و نرم‌افزارهای کاربردی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1653.0, "error": "باز (Available)"}, {"url": "https://www.audacityteam.org", "category": "ابزارها و نرم‌افزارهای کاربردی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1713.3, "error": "باز (Available)"}, {"url": "https://www.blender.org", "category": "ابزارها و نرم‌افزارهای کاربردی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1469.8, "error": "باز (Available)"}, {"url": "https://www.filezilla-project.org", "category": "ابزارها و نرم‌افزارهای کاربردی", "status": "در دسترس", "ok": true, "code": 200, "latency": 3007.9, "error": "باز (Available)"}, {"url": "https://www.gimp.org", "category": "ابزارها و نرم‌افزارهای کاربردی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1519.6, "error": "باز (Available)"}, {"url": "https://www.videolan.org", "category": "ابزارها و نرم‌افزارهای کاربردی", "status": "در دسترس", "ok": true, "code": 200, "latency": 2253.0, "error": "باز (Available)"}, {"url": "https://www.wireshark.org", "category": "ابزارها و نرم‌افزارهای کاربردی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1667.8, "error": "باز (Available)"}, {"url": "https://aistudio.google.com", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "در دسترس", "ok": true, "code": 200, "latency": 2904.5, "error": "باز (Available)"}, {"url": "https://discord.com", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "در دسترس", "ok": true, "code": 200, "latency": 1993.1, "error": "باز (Available)"}, {"url": "https://gemini.google.com", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "در دسترس", "ok": true, "code": 200, "latency": 2397.5, "error": "باز (Available)"}, {"url": "https://huggingface.co", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "در دسترس", "ok": true, "code": 200, "latency": 1659.4, "error": "باز (Available)"}, {"url": "https://mistral.ai", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "در دسترس", "ok": true, "code": 200, "latency": 1300.9, "error": "باز (Available)"}, {"url": "https://replicate.com", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "در دسترس", "ok": true, "code": 200, "latency": 1964.8, "error": "باز (Available)"}, {"url": "https://www.together.ai", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "در دسترس", "ok": true, "code": 200, "latency": 1059.8, "error": "باز (Available)"}, {"url": "https://godotengine.org", "category": "بازی‌سازی و گرافیک", "status": "در دسترس", "ok": true, "code": 200, "latency": 1278.2, "error": "باز (Available)"}, {"url": "https://vulkan.org", "category": "بازی‌سازی و گرافیک", "status": "در دسترس", "ok": true, "code": 200, "latency": 1356.8, "error": "باز (Available)"}, {"url": "https://www.ea.com", "category": "بازی‌سازی و گرافیک", "status": "در دسترس", "ok": true, "code": 200, "latency": 1419.1, "error": "باز (Available)"}, {"url": "https://www.khronos.org", "category": "بازی‌سازی و گرافیک", "status": "در دسترس", "ok": true, "code": 200, "latency": 1634.8, "error": "باز (Available)"}, {"url": "https://www.nintendo.com", "category": "بازی‌سازی و گرافیک", "status": "در دسترس", "ok": true, "code": 200, "latency": 2782.2, "error": "باز (Available)"}, {"url": "https://www.opengl.org", "category": "بازی‌سازی و گرافیک", "status": "در دسترس", "ok": true, "code": 200, "latency": 1351.8, "error": "باز (Available)"}, {"url": "https://www.playstation.com", "category": "بازی‌سازی و گرافیک", "status": "در دسترس", "ok": true, "code": 200, "latency": 4107.3, "error": "باز (Available)"}, {"url": "https://www.xbox.com", "category": "بازی‌سازی و گرافیک", "status": "در دسترس", "ok": true, "code": 200, "latency": 2865.1, "error": "باز (Available)"}, {"url": "https://www.caltech.edu", "category": "دانشگاه‌های معتبر جهانی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1668.7, "error": "باز (Available)"}, {"url": "https://www.cam.ac.uk", "category": "دانشگاه‌های معتبر جهانی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1556.2, "error": "باز (Available)"}, {"url": "https://www.cornell.edu", "category": "دانشگاه‌های معتبر جهانی", "status": "در دسترس", "ok": true, "code": 200, "latency": 2756.4, "error": "باز (Available)"}, {"url": "https://www.harvard.edu", "category": "دانشگاه‌های معتبر جهانی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1613.0, "error": "باز (Available)"}, {"url": "https://www.mit.edu", "category": "دانشگاه‌های معتبر جهانی", "status": "در دسترس", "ok": true, "code": 200, "latency": 2584.6, "error": "باز (Available)"}, {"url": "https://www.stanford.edu", "category": "دانشگاه‌های معتبر جهانی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1977.4, "error": "باز (Available)"}, {"url": "https://www.yale.edu", "category": "دانشگاه‌های معتبر جهانی", "status": "در دسترس", "ok": true, "code": 200, "latency": 2048.5, "error": "باز (Available)"}, {"url": "https://www.archlinux.org", "category": "دنیای متن‌باز و لینوکس", "status": "در دسترس", "ok": true, "code": 200, "latency": 3971.5, "error": "باز (Available)"}, {"url": "https://www.centos.org", "category": "دنیای متن‌باز و لینوکس", "status": "در دسترس", "ok": true, "code": 200, "latency": 1755.8, "error": "باز (Available)"}, {"url": "https://www.debian.org", "category": "دنیای متن‌باز و لینوکس", "status": "در دسترس", "ok": true, "code": 200, "latency": 2128.1, "error": "باز (Available)"}, {"url": "https://www.freebsd.org", "category": "دنیای متن‌باز و لینوکس", "status": "در دسترس", "ok": true, "code": 200, "latency": 2115.9, "error": "باز (Available)"}, {"url": "https://www.kernel.org", "category": "دنیای متن‌باز و لینوکس", "status": "در دسترس", "ok": true, "code": 200, "latency": 2471.4, "error": "باز (Available)"}, {"url": "https://www.linux.org", "category": "دنیای متن‌باز و لینوکس", "status": "در دسترس", "ok": true, "code": 200, "latency": 1904.1, "error": "باز (Available)"}, {"url": "https://www.openbsd.org", "category": "دنیای متن‌باز و لینوکس", "status": "در دسترس", "ok": true, "code": 200, "latency": 2429.6, "error": "باز (Available)"}, {"url": "https://www.opensuse.org", "category": "دنیای متن‌باز و لینوکس", "status": "در دسترس", "ok": true, "code": 200, "latency": 1751.7, "error": "باز (Available)"}, {"url": "https://www.ubuntu.com", "category": "دنیای متن‌باز و لینوکس", "status": "در دسترس", "ok": true, "code": 200, "latency": 4704.4, "error": "باز (Available)"}, {"url": "https://go.dev", "category": "زبان‌های برنامه‌نویسی و تکنولوژی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1788.7, "error": "باز (Available)"}, {"url": "https://www.haskell.org", "category": "زبان‌های برنامه‌نویسی و تکنولوژی", "status": "در دسترس", "ok": true, "code": 200, "latency": 2211.5, "error": "باز (Available)"}, {"url": "https://www.java.com", "category": "زبان‌های برنامه‌نویسی و تکنولوژی", "status": "در دسترس", "ok": true, "code": 200, "latency": 4137.3, "error": "باز (Available)"}, {"url": "https://www.lua.org", "category": "زبان‌های برنامه‌نویسی و تکنولوژی", "status": "در دسترس", "ok": true, "code": 200, "latency": 3294.7, "error": "باز (Available)"}, {"url": "https://www.perl.org", "category": "زبان‌های برنامه‌نویسی و تکنولوژی", "status": "در دسترس", "ok": true, "code": 200, "latency": 2537.7, "error": "باز (Available)"}, {"url": "https://www.php.net", "category": "زبان‌های برنامه‌نویسی و تکنولوژی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1982.0, "error": "باز (Available)"}, {"url": "https://www.python.org", "category": "زبان‌های برنامه‌نویسی و تکنولوژی", "status": "در دسترس", "ok": true, "code": 200, "latency": 2093.6, "error": "باز (Available)"}, {"url": "https://www.ruby-lang.org", "category": "زبان‌های برنامه‌نویسی و تکنولوژی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1396.6, "error": "باز (Available)"}, {"url": "https://www.rust-lang.org", "category": "زبان‌های برنامه‌نویسی و تکنولوژی", "status": "در دسترس", "ok": true, "code": 200, "latency": 3755.8, "error": "باز (Available)"}, {"url": "https://www.scala-lang.org", "category": "زبان‌های برنامه‌نویسی و تکنولوژی", "status": "در دسترس", "ok": true, "code": 200, "latency": 2664.8, "error": "باز (Available)"}, {"url": "https://ajax.googleapis.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 4065.0, "error": "باز (Available)"}, {"url": "https://analytics.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 3204.3, "error": "باز (Available)"}, {"url": "https://calendar.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 4443.0, "error": "باز (Available)"}, {"url": "https://cloud.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 2131.0, "error": "باز (Available)"}, {"url": "https://colab.research.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 2850.2, "error": "باز (Available)"}, {"url": "https://console.cloud.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 3692.1, "error": "باز (Available)"}, {"url": "https://developers.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 1459.4, "error": "باز (Available)"}, {"url": "https://docs.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 4123.1, "error": "باز (Available)"}, {"url": "https://drive.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 4204.6, "error": "باز (Available)"}, {"url": "https://mail.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 5174.1, "error": "باز (Available)"}, {"url": "https://meet.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 4338.0, "error": "باز (Available)"}, {"url": "https://play.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 3287.8, "error": "باز (Available)"}, {"url": "https://scholar.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 2392.5, "error": "باز (Available)"}, {"url": "https://translate.google.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "در دسترس", "ok": true, "code": 200, "latency": 3329.4, "error": "باز (Available)"}, {"url": "https://www.cern.ch", "category": "سازمان‌های استاندارد و علمی", "status": "در دسترس", "ok": true, "code": 200, "latency": 3086.9, "error": "باز (Available)"}, {"url": "https://www.esa.int", "category": "سازمان‌های استاندارد و علمی", "status": "در دسترس", "ok": true, "code": 200, "latency": 2249.7, "error": "باز (Available)"}, {"url": "https://www.iana.org", "category": "سازمان‌های استاندارد و علمی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1456.9, "error": "باز (Available)"}, {"url": "https://www.ietf.org", "category": "سازمان‌های استاندارد و علمی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1504.9, "error": "باز (Available)"}, {"url": "https://www.nasa.gov", "category": "سازمان‌های استاندارد و علمی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1385.3, "error": "باز (Available)"}, {"url": "https://www.asus.com", "category": "شرکت‌های سخت‌افزاری و الکترونیکی", "status": "در دسترس", "ok": true, "code": 200, "latency": 1882.7, "error": "باز (Available)"}, {"url": "https://www.lenovo.com", "category": "شرکت‌های سخت‌افزاری و الکترونیکی", "status": "در دسترس", "ok": true, "code": 200, "latency": 3953.3, "error": "باز (Available)"}, {"url": "https://www.philips.com", "category": "شرکت‌های سخت‌افزاری و الکترونیکی", "status": "در دسترس", "ok": true, "code": 200, "latency": 2704.8, "error": "باز (Available)"}, {"url": "https://www.samsung.com", "category": "شرکت‌های سخت‌افزاری و الکترونیکی", "status": "در دسترس", "ok": true, "code": 200, "latency": 3691.2, "error": "باز (Available)"}, {"url": "https://angular.io", "category": "فریم‌ورک‌ها و مدیریت محتوا", "status": "در دسترس", "ok": true, "code": 200, "latency": 6396.5, "error": "باز (Available)"}, {"url": "https://bootstrap.com", "category": "فریم‌ورک‌ها و مدیریت محتوا", "status": "در دسترس", "ok": true, "code": 200, "latency": 2590.8, "error": "باز (Available)"}, {"url": "https://drupal.org", "category": "فریم‌ورک‌ها و مدیریت محتوا", "status": "در دسترس", "ok": true, "code": 200, "latency": 3423.5, "error": "باز (Available)"}, {"url": "https://joomla.org", "category": "فریم‌ورک‌ها و مدیریت محتوا", "status": "در دسترس", "ok": true, "code": 200, "latency": 3126.7, "error": "باز (Available)"}, {"url": "https://jquery.com", "category": "فریم‌ورک‌ها و مدیریت محتوا", "status": "در دسترس", "ok": true, "code": 200, "latency": 1552.4, "error": "باز (Available)"}, {"url": "https://react.dev", "category": "فریم‌ورک‌ها و مدیریت محتوا", "status": "در دسترس", "ok": true, "code": 200, "latency": 1278.2, "error": "باز (Available)"}, {"url": "https://vuejs.org", "category": "فریم‌ورک‌ها و مدیریت محتوا", "status": "در دسترس", "ok": true, "code": 200, "latency": 2007.6, "error": "باز (Available)"}, {"url": "https://wordpress.org", "category": "فریم‌ورک‌ها و مدیریت محتوا", "status": "در دسترس", "ok": true, "code": 200, "latency": 2278.1, "error": "باز (Available)"}, {"url": "https://lineageos.org/", "category": "موتورهای جستجو و دانشنامه‌ها", "status": "در دسترس", "ok": true, "code": 200, "latency": 1784.8, "error": "باز (Available)"}, {"url": "https://www.bing.com", "category": "موتورهای جستجو و دانشنامه‌ها", "status": "در دسترس", "ok": true, "code": 200, "latency": 2806.8, "error": "باز (Available)"}, {"url": "https://www.dictionary.com", "category": "موتورهای جستجو و دانشنامه‌ها", "status": "در دسترس", "ok": true, "code": 200, "latency": 1660.9, "error": "باز (Available)"}, {"url": "https://www.google.com", "category": "موتورهای جستجو و دانشنامه‌ها", "status": "در دسترس", "ok": true, "code": 200, "latency": 2107.6, "error": "باز (Available)"}, {"url": "https://www.thesaurus.com", "category": "موتورهای جستجو و دانشنامه‌ها", "status": "در دسترس", "ok": true, "code": 200, "latency": 1443.6, "error": "باز (Available)"}, {"url": "https://www.weather.com", "category": "موتورهای جستجو و دانشنامه‌ها", "status": "در دسترس", "ok": true, "code": 200, "latency": 5307.1, "error": "باز (Available)"}, {"url": "https://www.wikipedia.org", "category": "موتورهای جستجو و دانشنامه‌ها", "status": "در دسترس", "ok": true, "code": 200, "latency": 2127.4, "error": "باز (Available)"}, {"url": "https://www.yahoo.com", "category": "موتورهای جستجو و دانشنامه‌ها", "status": "در دسترس", "ok": true, "code": 200, "latency": 4781.4, "error": "باز (Available)"}, {"url": "https://www.apache.org", "category": "پایگاه‌های داده و سرورها", "status": "در دسترس", "ok": true, "code": 200, "latency": 1480.4, "error": "باز (Available)"}, {"url": "https://www.haproxy.org", "category": "پایگاه‌های داده و سرورها", "status": "در دسترس", "ok": true, "code": 200, "latency": 2248.4, "error": "باز (Available)"}, {"url": "https://www.lighttpd.net", "category": "پایگاه‌های داده و سرورها", "status": "در دسترس", "ok": true, "code": 200, "latency": 2247.3, "error": "باز (Available)"}, {"url": "https://www.mariadb.org", "category": "پایگاه‌های داده و سرورها", "status": "در دسترس", "ok": true, "code": 200, "latency": 3156.4, "error": "باز (Available)"}, {"url": "https://www.mongodb.com", "category": "پایگاه‌های داده و سرورها", "status": "در دسترس", "ok": true, "code": 200, "latency": 1670.4, "error": "باز (Available)"}, {"url": "https://www.nginx.org", "category": "پایگاه‌های داده و سرورها", "status": "در دسترس", "ok": true, "code": 200, "latency": 3614.7, "error": "باز (Available)"}, {"url": "https://www.postgresql.org", "category": "پایگاه‌های داده و سرورها", "status": "در دسترس", "ok": true, "code": 200, "latency": 1630.0, "error": "باز (Available)"}, {"url": "https://www.redis.io", "category": "پایگاه‌های داده و سرورها", "status": "در دسترس", "ok": true, "code": 200, "latency": 3013.2, "error": "باز (Available)"}, {"url": "https://www.sqlite.org", "category": "پایگاه‌های داده و سرورها", "status": "در دسترس", "ok": true, "code": 200, "latency": 1936.9, "error": "باز (Available)"}, {"url": "https://www.inkscape.org", "category": "ابزارها و نرم‌افزارهای کاربردی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 2170.4, "error": "خطا (HTTP 403)"}, {"url": "https://www.libreoffice.org", "category": "ابزارها و نرم‌افزارهای کاربردی", "status": "مسدود / خطا", "ok": false, "code": "TLS_TIMEOUT", "latency": 0, "error": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)"}, {"url": "https://www.virtualbox.org", "category": "ابزارها و نرم‌افزارهای کاربردی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1691.6, "error": "خطا (HTTP 403)"}, {"url": "https://api.anthropic.com", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "مسدود / خطا", "ok": false, "code": 404, "latency": 1835.2, "error": "خطا (HTTP 404)"}, {"url": "https://api.openai.com", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "مسدود / خطا", "ok": false, "code": 421, "latency": 2040.6, "error": "خطا (HTTP 421)"}, {"url": "https://chatgpt.com", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1458.8, "error": "خطا (HTTP 403)"}, {"url": "https://claude.ai", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1412.1, "error": "خطا (HTTP 403)"}, {"url": "https://cohere.com", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "مسدود / خطا", "ok": false, "code": "TLS_TIMEOUT", "latency": 0, "error": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)"}, {"url": "https://platform.openai.com", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 2071.7, "error": "خطا (HTTP 403)"}, {"url": "https://www.perplexity.ai", "category": "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1440.4, "error": "خطا (HTTP 403)"}, {"url": "https://unity.com", "category": "بازی‌سازی و گرافیک", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1204.6, "error": "خطا (HTTP 403)"}, {"url": "https://www.unrealengine.com", "category": "بازی‌سازی و گرافیک", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1257.1, "error": "خطا (HTTP 403)"}, {"url": "https://www.columbia.edu", "category": "دانشگاه‌های معتبر جهانی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1540.5, "error": "خطا (HTTP 403)"}, {"url": "https://www.ox.ac.uk", "category": "دانشگاه‌های معتبر جهانی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1563.1, "error": "خطا (HTTP 403)"}, {"url": "https://www.princeton.edu", "category": "دانشگاه‌های معتبر جهانی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1569.9, "error": "خطا (HTTP 403)"}, {"url": "https://www.fedoraproject.org", "category": "دنیای متن‌باز و لینوکس", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 2702.3, "error": "خطا (HTTP 403)"}, {"url": "https://developer.android.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1370.1, "error": "خطا (HTTP 403)"}, {"url": "https://fonts.googleapis.com", "category": "زیردامنه‌های کاربردی و زیرساختی گوگل", "status": "مسدود / خطا", "ok": false, "code": 404, "latency": 1408.7, "error": "خطا (HTTP 404)"}, {"url": "https://www.acm.org", "category": "سازمان‌های استاندارد و علمی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1478.6, "error": "خطا (HTTP 403)"}, {"url": "https://www.icann.org", "category": "سازمان‌های استاندارد و علمی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1481.8, "error": "خطا (HTTP 403)"}, {"url": "https://www.ieee.org", "category": "سازمان‌های استاندارد و علمی", "status": "مسدود / خطا", "ok": false, "code": 202, "latency": 1348.3, "error": "خطا (HTTP 202)"}, {"url": "https://www.iso.org", "category": "سازمان‌های استاندارد و علمی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1392.0, "error": "خطا (HTTP 403)"}, {"url": "https://www.w3.org", "category": "سازمان‌های استاندارد و علمی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 2533.8, "error": "خطا (HTTP 403)"}, {"url": "https://www.bosch.com", "category": "شرکت‌های سخت‌افزاری و الکترونیکی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1411.0, "error": "خطا (HTTP 403)"}, {"url": "https://www.gigabyte.com", "category": "شرکت‌های سخت‌افزاری و الکترونیکی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1487.7, "error": "خطا (HTTP 403)"}, {"url": "https://www.lg.com", "category": "شرکت‌های سخت‌افزاری و الکترونیکی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 2287.0, "error": "خطا (HTTP 403)"}, {"url": "https://www.msi.com", "category": "شرکت‌های سخت‌افزاری و الکترونیکی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1474.8, "error": "خطا (HTTP 403)"}, {"url": "https://www.panasonic.com", "category": "شرکت‌های سخت‌افزاری و الکترونیکی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1349.9, "error": "خطا (HTTP 403)"}, {"url": "https://www.sony.com", "category": "شرکت‌های سخت‌افزاری و الکترونیکی", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 2175.0, "error": "خطا (HTTP 403)"}, {"url": "https://magento.com", "category": "فریم‌ورک‌ها و مدیریت محتوا", "status": "مسدود / خطا", "ok": false, "code": "TIMEOUT", "latency": 0, "error": "تایم‌اوت اتصال (Timeout)"}, {"url": "https://moodle.org", "category": "فریم‌ورک‌ها و مدیریت محتوا", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1193.9, "error": "خطا (HTTP 403)"}, {"url": "https://www.accuweather.com", "category": "موتورهای جستجو و دانشنامه‌ها", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1757.5, "error": "خطا (HTTP 403)"}, {"url": "https://www.britannica.com", "category": "موتورهای جستجو و دانشنامه‌ها", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1723.9, "error": "خطا (HTTP 403)"}, {"url": "https://www.imdb.com", "category": "موتورهای جستجو و دانشنامه‌ها", "status": "مسدود / خطا", "ok": false, "code": 202, "latency": 1793.4, "error": "خطا (HTTP 202)"}, {"url": "https://www.timeanddate.com", "category": "موتورهای جستجو و دانشنامه‌ها", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 2313.9, "error": "خطا (HTTP 403)"}, {"url": "https://www.mysql.com", "category": "پایگاه‌های داده و سرورها", "status": "مسدود / خطا", "ok": false, "code": 403, "latency": 1464.4, "error": "خطا (HTTP 403)"}];
+        
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 24px; color: var(--text-muted);">موردی یافت نشد.</td></tr>';
+                return;
+            }
+            
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                const statusBadge = item.ok 
+                    ? '<span class="badge-pill badge-success">✅ در دسترس</span>' 
+                    : '<span class="badge-pill badge-fail">❌ مسدود / خطا</span>';
+                    
+                const latStr = item.latency ? `<span class="monospace">${item.latency} ms</span>` : '-';
+                
+                tr.innerHTML = `
+                    <td class="monospace"><strong>${item.url}</strong></td>
+                    <td>${item.category}</td>
+                    <td>${statusBadge}</td>
+                    <td class="monospace">${item.code}</td>
+                    <td>${latStr}</td>
+                    <td style="color: var(--text-muted); font-size: 12px;">${item.error}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const statusVal = document.getElementById('statusFilter').value;
+            const catVal = document.getElementById('categoryFilter').value;
+            
+            const filtered = tableData.filter(item => {
+                const matchQuery = item.url.toLowerCase().includes(query) || 
+                                   item.category.toLowerCase().includes(query) ||
+                                   item.error.toLowerCase().includes(query);
+                
+                let matchStatus = true;
+                if (statusVal === 'OK') matchStatus = item.ok;
+                if (statusVal === 'BLOCKED') matchStatus = !item.ok;
+                
+                let matchCat = true;
+                if (catVal !== 'ALL') matchCat = (item.category === catVal);
+                
+                return matchQuery && matchStatus && matchCat;
+            });
+            
+            renderTable(filtered);
+        }
+
+        // مقداردهی اولیه جدول
+        renderTable(tableData);
+
+        // تنظیم نمودار دسته‌بندی با Chart.js
+        try {
+            const ctxCat = document.getElementById('categoryChart').getContext('2d');
+            new Chart(ctxCat, {
+                type: 'bar',
+                data: {
+                    labels: ["موتورهای جستجو و دانشنامه‌ها", "دنیای متن‌باز و لینوکس", "زبان‌های برنامه‌نویسی و تکنولوژی", "سازمان‌های استاندارد و علمی", "ابزارها و نرم‌افزارهای کاربردی", "دانشگاه‌های معتبر جهانی", "پایگاه‌های داده و سرورها", "شرکت‌های سخت‌افزاری و الکترونیکی", "فریم‌ورک‌ها و مدیریت محتوا", "بازی‌سازی و گرافیک", "ابزارهای هوش مصنوعی و مدل‌های زبانی (AI & LLMs)", "زیردامنه‌های کاربردی و زیرساختی گوگل"],
+                    datasets: [{
+                        label: 'درصد دسترسی (%)',
+                        data: [66.7, 90.0, 100.0, 50.0, 70.0, 70.0, 90.0, 40.0, 80.0, 80.0, 50.0, 87.5],
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: '#9ca3af' },
+                            grid: { color: '#374151' }
+                        },
+                        x: {
+                            ticks: { color: '#9ca3af', font: { family: 'Vazirmatn' } },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // نمودار تفکیک علل فیلترینگ
+            const ctxCensor = document.getElementById('censorshipChart').getContext('2d');
+            new Chart(ctxCensor, {
+                type: 'doughnut',
+                data: {
+                    labels: ['فیلترینگ SNI', 'مسدودسازی مستقیم IP', 'آلودگی DNS', 'خطای TLS', 'سالم و بدون فیلتر'],
+                    datasets: [{
+                        data: [
+                            2,
+                            0,
+                            3,
+                            0,
+                            15
+                        ],
+                        backgroundColor: ['#ef4444', '#f59e0b', '#8b5cf6', '#06b6d4', '#10b981'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { color: '#f3f4f6', font: { family: 'Vazirmatn' } }
+                        }
+                    }
+                }
+            });
+        } catch(e) {
+            console.log("Chart.js initialization fallback:", e);
+        }
+    </script>
+</body>
+</html>
