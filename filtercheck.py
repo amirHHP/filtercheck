@@ -12,15 +12,7 @@ import argparse
 import concurrent.futures
 from datetime import datetime
 
-# تلاش برای استفاده از requests و در صورت عدم وجود، استفاده از کتابخانه استاندارد urllib (Zero-dependency)
-try:
-    import requests
-    USE_REQUESTS = True
-except ImportError:
-    USE_REQUESTS = False
-    import urllib.request
-    import urllib.error
-    import ssl
+import netutil
 
 CATEGORIZED_SITES = {
     "موتورهای جستجو و دانشنامه‌ها": [
@@ -98,80 +90,12 @@ for cat, urls in CATEGORIZED_SITES.items():
     for u in urls:
         URL_TO_CATEGORY[u] = cat
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-}
-
 def create_ssl_context():
-    try:
-        return ssl._create_unverified_context()
-    except Exception:
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-        return ctx
-
-def check_site_urllib(url, timeout=4):
-    start = time.time()
-    req = urllib.request.Request(url, headers=HEADERS)
-    ctx = create_ssl_context()
-    
-    try:
-        with urllib.request.urlopen(req, timeout=timeout, context=ctx) as response:
-            latency = round((time.time() - start) * 1000, 1)
-            code = response.getcode()
-            if code in [200, 204, 301, 302, 303, 307, 308]:
-                return {"url": url, "status": "باز (Available)", "code": code, "latency": latency, "ok": True}
-            else:
-                return {"url": url, "status": f"خطا (HTTP {code})", "code": code, "latency": latency, "ok": False}
-    except urllib.error.HTTPError as e:
-        latency = round((time.time() - start) * 1000, 1)
-        if e.code in [301, 302, 303, 307, 308]:
-            return {"url": url, "status": "باز (Available)", "code": e.code, "latency": latency, "ok": True}
-        return {"url": url, "status": f"خطا (HTTP {e.code})", "code": e.code, "latency": latency, "ok": False}
-    except urllib.error.URLError as e:
-        reason = str(e.reason)
-        if "timed out" in reason.lower() or "handshake" in reason.lower():
-            if "handshake" in reason.lower():
-                return {"url": url, "status": "تایم‌اوت TLS (فیلترینگ SNI / Throttling)", "code": "TLS_TIMEOUT", "latency": None, "ok": False}
-            return {"url": url, "status": "تایم‌اوت اتصال (Connect Timeout)", "code": "TIMEOUT", "latency": None, "ok": False}
-        elif "connection refused" in reason.lower() or "reset" in reason.lower():
-            return {"url": url, "status": "کانکشن ریست/فیلتر (Connection Reset/Blocked)", "code": "RST_REFUSED", "latency": None, "ok": False}
-        elif "nodename nor servname" in reason.lower() or "name resolution" in reason.lower():
-            return {"url": url, "status": "خطای DNS (دامنه یافت نشد)", "code": "DNS_FAIL", "latency": None, "ok": False}
-        elif "ssl" in reason.lower() or "certificate" in reason.lower():
-            return {"url": url, "status": "خطای SSL (احتمال شنود یا مسدودسازی)", "code": "SSL_ERR", "latency": None, "ok": False}
-        return {"url": url, "status": f"خطای اتصال ({reason[:40]})", "code": "CONN_ERR", "latency": None, "ok": False}
-    except TimeoutError:
-        return {"url": url, "status": "تایم‌اوت اتصال (Timeout)", "code": "TIMEOUT", "latency": None, "ok": False}
-    except Exception as e:
-        return {"url": url, "status": f"خطای ناشناخته ({str(e)[:40]})", "code": "ERR", "latency": None, "ok": False}
-
-def check_site_requests(url, timeout=(3, 5)):
-    start = time.time()
-    try:
-        response = requests.get(url, headers=HEADERS, timeout=timeout, allow_redirects=True, verify=False)
-        latency = round((time.time() - start) * 1000, 1)
-        if response.status_code in [200, 301, 302, 303, 307, 308]:
-            return {"url": url, "status": "باز (Available)", "code": response.status_code, "latency": latency, "ok": True}
-        else:
-            return {"url": url, "status": f"خطا (HTTP {response.status_code})", "code": response.status_code, "latency": latency, "ok": False}
-    except requests.exceptions.ReadTimeout:
-        return {"url": url, "status": "تایم‌اوت دریافت (Read Timeout)", "code": "READ_TIMEOUT", "latency": None, "ok": False}
-    except requests.exceptions.ConnectTimeout:
-        return {"url": url, "status": "تایم‌اوت اتصال (Connect Blocked/Dropped)", "code": "CONN_TIMEOUT", "latency": None, "ok": False}
-    except requests.exceptions.SSLError:
-        return {"url": url, "status": "خطای SSL (احتمال شنود یا مسدودسازی)", "code": "SSL_ERR", "latency": None, "ok": False}
-    except requests.exceptions.ConnectionError:
-        return {"url": url, "status": "کانکشن ریست/فیلتر (Connection Error)", "code": "CONN_ERR", "latency": None, "ok": False}
-    except Exception as e:
-        return {"url": url, "status": f"خطای ناشناخته ({str(e)[:40]})", "code": "ERR", "latency": None, "ok": False}
+    return netutil.ssl_context()
 
 def check_site(url, timeout=4):
-    if USE_REQUESTS:
-        return check_site_requests(url, timeout=(timeout, timeout))
-    else:
-        return check_site_urllib(url, timeout=timeout)
+    """فقط تا هدر HTTP. ۴۰۱ و ۴۰۳ و ۴۲۹ یعنی سرور پاسخ داده و فیلتر نیست."""
+    return netutil.probe_http(url, timeout=timeout)
 
 def save_report(report_data, output_dir="reports"):
     os.makedirs(output_dir, exist_ok=True)
@@ -258,7 +182,7 @@ def generate_markdown_report(report_data):
 
 def run_tests(threads=25, timeout=4):
     print(f"در حال بررسی وضعیت دسترسی به {len(SITES_TO_CHECK)} سایت و سرویس بین‌المللی...")
-    print(f"تعداد پردازشگر همزمان: {threads} | تایم‌اوت: {timeout} ثانیه | موتور ارتباط: {'requests' if USE_REQUESTS else 'urllib (builtin)'}")
+    print(f"تعداد پردازشگر همزمان: {threads} | تایم‌اوت: {timeout} ثانیه | موتور ارتباط: urllib (بدون دانلود بدنه)")
     print("-" * 65)
     
     results = []

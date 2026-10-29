@@ -7,14 +7,12 @@
 - تشخیص وضعیت اینترنت ملی (National Intranet Lockdown Mode)
 """
 
-import sys
 import time
 import json
 import urllib.request
-import urllib.error
-import ssl
 import concurrent.futures
-from urllib.parse import urlparse
+
+import netutil
 
 # لیست سرویس‌های مرجع داخلی برای سنجش پایداری شبکه ملی
 DOMESTIC_BENCHMARK_SERVICES = [
@@ -68,15 +66,6 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 }
 
-def create_ssl_context():
-    try:
-        return ssl._create_unverified_context()
-    except Exception:
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-        return ctx
-
 def identify_iranian_isp(raw_isp, raw_org, raw_as):
     """تشخیص و استانداردسازی نام اپراتور ایرانی بر اساس نام و AS Number"""
     text = f"{raw_isp} {raw_org} {raw_as}".lower()
@@ -122,7 +111,7 @@ def get_network_identity(timeout=3):
     استخراج مشخصات اتصال فعلی (IP عمومی، اپراتور، ASN، شهر و کشور)
     با مکانیزم تلاش متوالی بر روی چندین سرویس بدون نیاز به کلید API
     """
-    ctx = create_ssl_context()
+    ctx = netutil.ssl_context()
     endpoints = [
         ("http://ip-api.com/json/", "ip-api"),
         ("https://freeipapi.com/api/json", "freeipapi"),
@@ -206,45 +195,16 @@ def get_network_identity(timeout=3):
     }
 
 def probe_benchmark_url(item, timeout=3):
-    name = item["name"]
-    url = item["url"]
-    ctx = create_ssl_context()
-    start = time.time()
-    req = urllib.request.Request(url, headers=HEADERS)
-    
-    try:
-        with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
-            lat = round((time.time() - start) * 1000, 1)
-            code = resp.getcode()
-            ok = (200 <= code < 400)
-            return {
-                "name": name,
-                "url": url,
-                "ok": ok,
-                "code": code,
-                "latency_ms": lat,
-                "error": None
-            }
-    except urllib.error.HTTPError as e:
-        lat = round((time.time() - start) * 1000, 1)
-        ok = (200 <= e.code < 400)
-        return {
-            "name": name,
-            "url": url,
-            "ok": ok,
-            "code": e.code,
-            "latency_ms": lat,
-            "error": f"HTTP {e.code}"
-        }
-    except Exception as e:
-        return {
-            "name": name,
-            "url": url,
-            "ok": False,
-            "code": None,
-            "latency_ms": None,
-            "error": type(e).__name__
-        }
+    """همان کش HTTP چک وب‌سایت‌ها، تا دامنهٔ مشترک در یک دور دو بار گرفته نشود."""
+    probed = netutil.probe_http(item["url"], timeout=timeout)
+    return {
+        "name": item["name"],
+        "url": item["url"],
+        "ok": probed["ok"],
+        "code": probed["code"],
+        "latency_ms": probed["latency"],
+        "error": None if probed["ok"] else probed["status"],
+    }
 
 def check_intranet_index(timeout=3, threads=15):
     """
@@ -258,7 +218,7 @@ def check_intranet_index(timeout=3, threads=15):
     
     # تست همزمان تمام سرویس‌های داخلی و بین‌المللی
     all_targets = [("dom", item) for item in DOMESTIC_BENCHMARK_SERVICES] + [("intl", item) for item in INTERNATIONAL_BENCHMARK_SERVICES]
-    with concurrent.futures.ThreadPoolExecutor(max_workers=threads * 2) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
         f_map = {executor.submit(probe_benchmark_url, item, timeout): (scope, item) for scope, item in all_targets}
         for f in concurrent.futures.as_completed(f_map):
             scope, _ = f_map[f]

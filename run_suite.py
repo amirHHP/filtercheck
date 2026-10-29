@@ -16,16 +16,17 @@ import os
 import sys
 import time
 import json
-import socket
-import ssl
-import subprocess
+import shutil
 import argparse
 import concurrent.futures
 from datetime import datetime
+from functools import partial
+
+import netutil
 
 # ۱. ایمپورت ماژول‌های پروژه
 try:
-    from filtercheck import CATEGORIZED_SITES, SITES_TO_CHECK, URL_TO_CATEGORY, check_site, create_ssl_context
+    from filtercheck import CATEGORIZED_SITES, SITES_TO_CHECK, URL_TO_CATEGORY, check_site
 except ImportError:
     print("[!] ماژول filtercheck.py یافت نشد.")
     sys.exit(1)
@@ -49,7 +50,7 @@ except ImportError:
     sys.exit(1)
 
 try:
-    from qos_metrics import run_qos_benchmark
+    from qos_metrics import run_qos_benchmark, measure_bandwidth_throttling, measure_ping_and_jitter
 except ImportError:
     print("[!] ماژول qos_metrics.py یافت نشد.")
     sys.exit(1)
@@ -88,31 +89,21 @@ CYAN = '\033[96m'
 BOLD = '\033[1m'
 RESET = '\033[0m'
 
-def check_single_dns(dns_ip, domains=DNS_TEST_DOMAINS, timeout=2):
+def check_single_dns(dns_ip, domains=DNS_TEST_DOMAINS, timeout=1.0):
+    """پرسش A روی UDP. dig اجرا نمی‌شود."""
     resolved = {}
     all_ok = True
     for dom in domains:
-        try:
-            res = subprocess.run(
-                ['dig', '+time=1', '+tries=1', '+short', dom, f'@{dns_ip}'],
-                capture_output=True,
-                text=True,
-                timeout=timeout
-            )
-            output = res.stdout.strip()
-            if res.returncode == 0 and output:
-                resolved[dom] = output.split('\n')[0]
-            else:
-                resolved[dom] = None
-                all_ok = False
-        except Exception:
+        ips = netutil.resolve_a(dom, server=dns_ip, timeout=timeout)
+        if ips:
+            resolved[dom] = ips[0]
+        else:
             resolved[dom] = None
             all_ok = False
-            
     return {
         "ip": dns_ip,
         "ok": all_ok,
-        "resolved": resolved
+        "resolved": resolved,
     }
 
 def run_dns_checks(threads=15):
@@ -174,14 +165,20 @@ def run_vpn_checks(timeout=3, threads=15):
         "results": sorted(results, key=lambda x: (not x["ok"], x.get("latency") or 9999, x["name"]))
     }
 
-def run_web_checks(threads=30, timeout=3.5):
+def run_web_checks(threads=30, timeout=3.5, fast_timeout=None, fast_urls=None):
     start = time.time()
     results = []
     accessible_count = 0
     latencies = []
-    
+    fast_urls = set(fast_urls or ())
+
+    def timeout_for(url):
+        if fast_timeout is not None and url in fast_urls:
+            return fast_timeout
+        return timeout
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
-        futures = {executor.submit(check_site, url, timeout): url for url in SITES_TO_CHECK}
+        futures = {executor.submit(check_site, url, timeout_for(url)): url for url in SITES_TO_CHECK}
         for future in concurrent.futures.as_completed(futures):
             res = future.result()
             res["category"] = URL_TO_CATEGORY.get(res["url"], "متفرقه")
@@ -301,6 +298,13 @@ def generate_unified_markdown(data):
         "",
         f"### شاخص کل سلامت اینترنت: **{h['score']}/100** — {h['badge']}",
         "",
+    ]
+    if data.get("probe_mode") == "light":
+        md.extend([
+            "> دور سبک: وب، DNS و پینگ تازه‌اند. سرعت، traceroute، ریشه‌یابی و پروتکل‌ها از آخرین دور کامل آمده‌اند.",
+            "",
+        ])
+    md.extend([
         "> [!NOTE]",
         f"> **اپراتور (ISP):** `{net.get('isp', 'نامشخص')}` | **ASN:** `{net.get('asn', '-')}` | **آی‌پی:** `{net.get('ip', '-')}` | **مکان:** `{net.get('city', '')}, {net.get('country', '')}`",
         f"> **شاخص اینترنت ملی:** نسبت دسترسی `{intra.get('ratio', 1.0)}x` ({intra.get('badge', '-')})",
@@ -323,7 +327,7 @@ def generate_unified_markdown(data):
         "## 🛡️ ۲. ریشه‌یابی علل فیلترینگ (Censorship Root-Cause Breakdown)",
         "| نوع مکانیزم فیلترینگ | تعداد موارد شناسایی شده | سهم از کل | رفتار مشاهده شده |",
         "| :--- | :---: | :---: | :--- |"
-    ]
+    ])
     
     bd = censor.get("breakdown", {})
     tot_c = censor.get("total", 1) or 1
@@ -361,68 +365,141 @@ def generate_unified_markdown(data):
     md.append("")
     return "\n".join(md)
 
-def run_suite_step(output_dir="reports", threads=25, timeout=3.5):
+def _copy_section(prev, key):
+    if not prev or prev.get(key) is None:
+        return None
+    return json.loads(json.dumps(prev[key]))
+
+
+def _previously_open_urls(prev):
+    urls = set()
+    if not prev:
+        return urls
+    for item in prev.get("results") or []:
+        if item.get("ok") and item.get("url"):
+            urls.add(item["url"])
+    return urls
+
+
+def _collect(jobs):
+    """هر job یک (نام، تابع بدون آرگومان) است. خودِ تابع‌ها داخلشان pool دارند."""
+    with concurrent.futures.ThreadPoolExecutor(max_workers=len(jobs)) as executor:
+        futures = {name: executor.submit(fn) for name, fn in jobs}
+        return {name: future.result() for name, future in futures.items()}
+
+
+def run_suite_step(output_dir="reports", threads=25, timeout=3.5, mode="full", prev_report=None):
     """
-    اجرای یک دور کامل پایش همه‌جانبه وضعیت اینترنت
+    mode=full همهٔ فازها را می‌زند. فازهای مستقل همزمان‌اند و تست سرعت تنها می‌ماند.
+    mode=light فقط وب، DNS و پینگ را تازه می‌کند.
     """
+    if mode == "light" and not prev_report:
+        mode = "full"
+
+    netutil.clear_caches()
     now = datetime.now()
     t_readable = now.strftime("%Y-%m-%d %H:%M:%S")
     t_id = now.strftime("%Y%m%d_%H%M%S")
     total_start = time.time()
-    
+    carried = []
+
+    title = "دور کامل" if mode == "full" else "دور سبک (وب، DNS، پینگ)"
     print(f"\n{BOLD}{CYAN}══════════════════════════════════════════════════════════════{RESET}")
     print(f"{BOLD}{CYAN}   🚀 شروع پایش همه‌جانبه وضعیت اینترنت، فیلترینگ و کیفیت شبکه  {RESET}")
     print(f"{BOLD}{CYAN}══════════════════════════════════════════════════════════════{RESET}")
-    print(f"زمان اجرا: {t_readable}\n")
-    
-    # فاز ۱: هویت شبکه و شاخص اینترنت ملی
-    print(f"{BOLD}{CYAN}──▶ فاز ۱: شناسایی هویت شبکه و سنجش شاخص اینترنت ملی...{RESET}")
-    net_id = get_network_identity(timeout=3)
-    print(f"    اپراتور: {BOLD}{net_id['isp']}{RESET} | ASN: {net_id['asn']} | IP: {net_id['ip']} | موقعیت: {net_id['city']}, {net_id['country']}")
-    intranet_idx = check_intranet_index(timeout=3, threads=12)
-    print(f"    وضعیت شبکه ملی: {intranet_idx['badge']} (نسبت: {intranet_idx['ratio']}x)")
-    
-    # فاز ۲: دسترسی وب‌سایت‌ها
-    print(f"\n{BOLD}{CYAN}──▶ فاز ۲: پایش دسترسی به {len(SITES_TO_CHECK)} سایت و سرویس کلیدی...{RESET}")
-    web_res = run_web_checks(threads=threads, timeout=timeout)
-    print(f"    سایت‌های در دسترس: {GREEN}{web_res['accessible']}/{web_res['total']}{RESET} ({web_res['accessible_percent']}%) | میانگین تاخیر: {web_res['avg_latency_ms']}ms")
-    
-    # فاز ۳: ریشه‌یابی تکنیکال فیلترینگ
-    print(f"\n{BOLD}{CYAN}──▶ فاز ۳: ریشه‌یابی لایه‌ای فیلترینگ (SNI vs IP vs DNS vs QUIC)...{RESET}")
-    # انتخاب نمونه سایت‌های مسدود شده برای ریشه‌یابی دقیق
-    blocked_urls = [r["url"] for r in web_res["results"] if not r.get("ok")]
-    target_urls_to_probe = blocked_urls[:20] if blocked_urls else SITES_TO_CHECK[:15]
-    censor_analysis = batch_censorship_analysis(target_urls_to_probe, timeout=2.5, threads=12)
-    bd = censor_analysis["breakdown"]
-    print(f"    تفکیک سانسور: فیلترینگ SNI: {RED}{bd['SNI_BLOCK']}{RESET} | تراتلینگ: {YELLOW}{bd.get('THROTTLING', 0)}{RESET} | مسدودسازی IP: {YELLOW}{bd['IP_BLOCK']}{RESET} | آلودگی DNS: {BLUE}{bd['DNS_POISONING']}{RESET}")
-    quic_res = run_quic_vs_tcp_benchmark(timeout=2.0)
-    print(f"    وضعیت پروتکل UDP/QUIC (HTTP/3): {quic_res['badge']}")
-    
-    # فاز ۴: سنجش کیفیت، پایداری و افت خط
-    print(f"\n{BOLD}{CYAN}──▶ فاز ۴: سنجش کیفیت خط (Ping, Jitter, Packet Loss, Speed & Traceroute)...{RESET}")
-    qos_res = run_qos_benchmark(ping_count=3, speed_timeout=5.0)
-    stab = qos_res["stability"]
-    thrott = qos_res["throttling"]
-    trace = qos_res["traceroute"]
-    print(f"    پایداری خط: {stab['stability_badge']}")
-    print(f"    پکت‌لاس بین‌الملل: {stab['international']['avg_packet_loss_pct']}% | جیتر بین‌الملل: {stab['international']['avg_jitter_ms']}ms")
-    print(f"    پهنای باند خارجی: {thrott['international_avg_mbps']} Mbps | داخلی: {thrott['domestic_avg_mbps']} Mbps | {thrott['badge']}")
-    print(f"    مسیر Traceroute: {trace.get('status_badge', 'نامشخص')} ({trace.get('total_hops_inspected', 0)} هاپ)")
-    
-    # فاز ۵: بنچمارک پروتکل‌های نوین ضد فیلتر و آی‌پی‌های تمیز
-    print(f"\n{BOLD}{CYAN}──▶ فاز ۵: بررسی پروتکل‌های ضد فیلتر (Reality / V2Ray / Hysteria / Clean IPs)...{RESET}")
-    circ_res = run_circumvention_benchmark(timeout=2.5, threads=12)
-    c_sum = circ_res["summary"]
-    print(f"    پروتکل‌های مدرن فعال: {GREEN}{c_sum['protocols_working']}/{c_sum['protocols_total']}{RESET} ({c_sum['protocols_percent']}%)")
-    print(f"    دی‌ان‌اس امن: DoH ({c_sum['doh_working']}/4) | DoT پورت ۸۵۳ ({c_sum['dot_working']}/4)")
-    print(f"    آی‌پی‌های تمیز کلودفلر: {GREEN}{c_sum['clean_ips_working']}/{c_sum['clean_ips_total']}{RESET} ({c_sum['clean_ips_percent']}%)")
-    
-    # فاز ۶: دی‌ان‌اس‌های داخلی و APIهای VPN
-    print(f"\n{BOLD}{CYAN}──▶ فاز ۶: بررسی سرورهای DNS داخلی و APIهای ضد فیلتر...{RESET}")
-    dns_res = run_dns_checks(threads=15)
-    vpn_res = run_vpn_checks(timeout=3, threads=15)
-    print(f"    سرورهای DNS سالم: {dns_res['working']}/{dns_res['total']} | سرویس‌های VPN باز: {vpn_res['working']}/{vpn_res['total']}")
-    
+    print(f"زمان اجرا: {t_readable} | {title}\n")
+
+    if mode == "light":
+        fast_urls = _previously_open_urls(prev_report)
+        print(f"{BOLD}{CYAN}──▶ دور سبک: وب، DNS و پینگ همزمان. {len(fast_urls)} سایتِ باز دور قبل با تایم‌اوت ۲ ثانیه.{RESET}")
+        wave = _collect([
+            ("web", partial(run_web_checks, threads=threads, timeout=timeout, fast_timeout=2.0, fast_urls=fast_urls)),
+            ("dns", partial(run_dns_checks, threads=15)),
+            ("ping", partial(measure_ping_and_jitter, count=10, timeout=4.0)),
+        ])
+        web_res = wave["web"]
+        dns_res = wave["dns"]
+        net_id = _copy_section(prev_report, "network_identity")
+        intranet_idx = _copy_section(prev_report, "intranet_index")
+        vpn_res = _copy_section(prev_report, "vpn")
+        circ_res = _copy_section(prev_report, "circumvention")
+        censor_analysis = _copy_section(prev_report, "censorship_analysis")
+        quic_res = _copy_section(prev_report, "quic_benchmark")
+        qos_res = _copy_section(prev_report, "qos") or {}
+        qos_res["stability"] = wave["ping"]
+        qos_res.setdefault("throttling", {})
+        qos_res.setdefault("traceroute", {})
+        carried = [
+            "network_identity", "intranet_index", "vpn", "circumvention",
+            "censorship_analysis", "quic_benchmark", "qos.throttling", "qos.traceroute",
+        ]
+    else:
+        print(f"{BOLD}{CYAN}──▶ موج ۱: هویت شبکه، اینترانت، وب، DNS و VPN همزمان...{RESET}")
+        wave1 = _collect([
+            ("net", partial(get_network_identity, timeout=3)),
+            ("intra", partial(check_intranet_index, timeout=timeout, threads=12)),
+            ("web", partial(run_web_checks, threads=threads, timeout=timeout)),
+            ("dns", partial(run_dns_checks, threads=15)),
+            ("vpn", partial(run_vpn_checks, timeout=3, threads=15)),
+        ])
+        net_id = wave1["net"]
+        intranet_idx = wave1["intra"]
+        web_res = wave1["web"]
+        dns_res = wave1["dns"]
+        vpn_res = wave1["vpn"]
+        print(f"    اپراتور: {BOLD}{net_id['isp']}{RESET} | ASN: {net_id['asn']} | IP: {net_id['ip']} | موقعیت: {net_id['city']}, {net_id['country']}")
+        print(f"    وضعیت شبکه ملی: {intranet_idx['badge']} (نسبت: {intranet_idx['ratio']}x)")
+        print(f"    سایت‌های در دسترس: {GREEN}{web_res['accessible']}/{web_res['total']}{RESET} ({web_res['accessible_percent']}%) | میانگین تاخیر: {web_res['avg_latency_ms']}ms")
+        print(f"    سرورهای DNS سالم: {dns_res['working']}/{dns_res['total']} | سرویس‌های VPN باز: {vpn_res['working']}/{vpn_res['total']}")
+
+        blocked_urls = [r["url"] for r in web_res["results"] if not r.get("ok")]
+        target_urls_to_probe = blocked_urls[:20] if blocked_urls else SITES_TO_CHECK[:15]
+        print(f"\n{BOLD}{CYAN}──▶ موج ۲: ریشه‌یابی، QUIC، پینگ، traceroute و پروتکل‌ها همزمان...{RESET}")
+        wave2 = _collect([
+            ("censor", partial(batch_censorship_analysis, target_urls_to_probe, timeout=2.5, threads=12)),
+            ("quic", partial(run_quic_vs_tcp_benchmark, timeout=2.5)),
+            ("qos", partial(run_qos_benchmark, ping_count=10, include_speed=False)),
+            ("circ", partial(run_circumvention_benchmark, timeout=2.5, threads=12)),
+        ])
+        censor_analysis = wave2["censor"]
+        quic_res = wave2["quic"]
+        qos_res = wave2["qos"]
+        circ_res = wave2["circ"]
+        bd = censor_analysis["breakdown"]
+        c_sum = circ_res["summary"]
+        print(f"    تفکیک سانسور: فیلترینگ SNI: {RED}{bd['SNI_BLOCK']}{RESET} | تراتلینگ: {YELLOW}{bd.get('THROTTLING', 0)}{RESET} | مسدودسازی IP: {YELLOW}{bd['IP_BLOCK']}{RESET} | آلودگی DNS: {BLUE}{bd['DNS_POISONING']}{RESET}")
+        print(f"    وضعیت پروتکل UDP/QUIC (HTTP/3): {quic_res['badge']}")
+        print(f"    پروتکل‌های مدرن فعال: {GREEN}{c_sum['protocols_working']}/{c_sum['protocols_total']}{RESET} ({c_sum['protocols_percent']}%) | آی‌پی تمیز: {c_sum['clean_ips_working']}/{c_sum['clean_ips_total']}")
+
+        print(f"\n{BOLD}{CYAN}──▶ تست سرعت، جدا از بقیه (یک فایل ۲ مگابایتی داخلی و یکی خارجی)...{RESET}")
+        speed_started = time.time()
+        qos_res["throttling"] = measure_bandwidth_throttling(timeout=20.0)
+        qos_res["elapsed_seconds"] = round(qos_res.get("elapsed_seconds", 0) + (time.time() - speed_started), 2)
+
+    web_res = web_res or {}
+    dns_res = dns_res or {}
+    vpn_res = vpn_res or {"total": 0, "working": 0, "results": []}
+    intranet_idx = intranet_idx or {"mode": "NORMAL", "badge": "-", "ratio": 1.0}
+    net_id = net_id or {"isp": "نامشخص", "asn": "-", "ip": "-", "city": "", "country": ""}
+    circ_res = circ_res or {"summary": {}}
+    censor_analysis = censor_analysis or {"breakdown": {}, "total": 0, "results": []}
+    quic_res = quic_res or {}
+    qos_res = qos_res or {"stability": {}, "throttling": {}, "traceroute": {}}
+
+    if mode == "light":
+        print(f"    سایت‌های در دسترس: {GREEN}{web_res['accessible']}/{web_res['total']}{RESET} ({web_res['accessible_percent']}%) | میانگین تاخیر: {web_res['avg_latency_ms']}ms")
+        print(f"    سرورهای DNS سالم: {dns_res['working']}/{dns_res['total']}")
+
+    stab = qos_res.get("stability") or {}
+    thrott = qos_res.get("throttling") or {}
+    trace = qos_res.get("traceroute") or {}
+    intl = stab.get("international") or {}
+    print(f"    پایداری خط: {stab.get('stability_badge', '-')}")
+    print(f"    پکت‌لاس بین‌الملل: {intl.get('avg_packet_loss_pct', '-')}% | جیتر بین‌الملل: {intl.get('avg_jitter_ms', '-')}ms")
+    if mode == "full":
+        print(f"    پهنای باند خارجی: {thrott.get('international_avg_mbps', 0)} Mbps | داخلی: {thrott.get('domestic_avg_mbps', 0)} Mbps | {thrott.get('badge', '-')}")
+        print(f"    مسیر Traceroute: {trace.get('status_badge', 'نامشخص')} ({trace.get('total_hops_inspected', 0)} هاپ)")
+
     total_elapsed = round(time.time() - total_start, 2)
     
     # محاسبه نمره جامع سلامت
@@ -431,6 +508,8 @@ def run_suite_step(output_dir="reports", threads=25, timeout=3.5):
     report_data = {
         "timestamp": t_readable,
         "timestamp_id": t_id,
+        "probe_mode": mode,
+        "sections_carried_forward": carried,
         "total_elapsed_seconds": total_elapsed,
         "health": health,
         "network_identity": net_id,
@@ -478,19 +557,19 @@ def run_suite_step(output_dir="reports", threads=25, timeout=3.5):
     # تولید داشبورد تعاملی HTML
     dashboard_path = os.path.join(output_dir, "dashboard.html")
     generate_html_dashboard(report_data, dashboard_path)
-    # همچنین ذخیره یک نسخه با تایم‌استمپ برای آرشیو
     hist_dash = os.path.join(output_dir, f"dashboard_{t_id}.html")
-    generate_html_dashboard(report_data, hist_dash)
-    
+    shutil.copyfile(dashboard_path, hist_dash)
+
+    c_sum = circ_res.get("summary") or {}
     print(f"\n{BOLD}{GREEN}══════════════════════════════════════════════════════════════{RESET}")
     print(f"{BOLD}{GREEN}                 خلاصه وضعیت نهایی و سلامت اینترنت            {RESET}")
     print(f"{BOLD}{GREEN}══════════════════════════════════════════════════════════════{RESET}")
-    print(f"اپراتور و موقعیت:     {net_id['isp']} ({net_id['asn']}) | {net_id['city']}, {net_id['country']}")
+    print(f"اپراتور و موقعیت:     {net_id.get('isp', '-')} ({net_id.get('asn', '-')}) | {net_id.get('city', '')}, {net_id.get('country', '')}")
     print(f"نمره سلامت اینترنت:   {BOLD}{health['score']}/100{RESET} ({health['badge']})")
-    print(f"شاخص اینترنت ملی:     {intranet_idx['ratio']}x ({intranet_idx['badge']})")
+    print(f"شاخص اینترنت ملی:     {intranet_idx.get('ratio', '-')}x ({intranet_idx.get('badge', '-')})")
     print(f"دسترسی وب‌سایت‌ها:      {web_res['accessible']}/{web_res['total']} ({web_res['accessible_percent']}%) | میانگین تاخیر: {web_res['avg_latency_ms']}ms")
-    print(f"کیفیت و تراتلینگ:     جیتر: {stab['international']['avg_jitter_ms']}ms | پکت‌لاس: {stab['international']['avg_packet_loss_pct']}% | سرعت خارجی: {thrott['international_avg_mbps']} Mbps")
-    print(f"آی‌پی‌های تمیز کلودفلر: {c_sum['clean_ips_working']}/{c_sum['clean_ips_total']} ({c_sum['clean_ips_percent']}%) | پروتکل‌های نوین: {c_sum['protocols_working']}/{c_sum['protocols_total']}")
+    print(f"کیفیت و تراتلینگ:     جیتر: {intl.get('avg_jitter_ms', '-')}ms | پکت‌لاس: {intl.get('avg_packet_loss_pct', '-')}% | سرعت خارجی: {thrott.get('international_avg_mbps', 0)} Mbps")
+    print(f"آی‌پی‌های تمیز کلودفلر: {c_sum.get('clean_ips_working', 0)}/{c_sum.get('clean_ips_total', 0)} ({c_sum.get('clean_ips_percent', 0)}%) | پروتکل‌های نوین: {c_sum.get('protocols_working', 0)}/{c_sum.get('protocols_total', 0)}")
     print(f"زمان کل پایش:         {total_elapsed} ثانیه")
     print(f"\n[💾] گزارش‌ها و داشبورد ذخیره شدند:")
     print(f"  • داشبورد تعاملی HTML: {BOLD}{dashboard_path}{RESET}")
@@ -507,16 +586,17 @@ def main():
     parser.add_argument("--timeout", type=float, default=3.5, help="تایم‌اوت هر تست")
     parser.add_argument("--compare", action="store_true", help="مقایسه خودکار با گزارش قبلی پس از اتمام")
     parser.add_argument("--watch", type=int, default=None, help="پایش پیوسته با فاصله زمانی مشخص به ثانیه (حالت Daemon/Watch)")
+    parser.add_argument("--full-every", type=int, default=300, help="در حالت watch، فاصلهٔ دور کامل به ثانیه. بین آن‌ها فقط وب، DNS و پینگ تکرار می‌شود")
     args = parser.parse_args()
 
     # حالت ۱: پایش پیوسته مداوم (--watch)
     if args.watch is not None:
         interval = max(5, args.watch)
+        full_every = max(interval, args.full_every)
         print(f"\n[🔄] حالت پایش مداوم (Watch Mode) فعال شد. فاصله هر دور: {interval} ثانیه")
-        print(f"[i] برای توقف برنامه کلیدهای Ctrl+C را فشار دهید.")
-        
+        print(f"[i] دور کامل هر {full_every} ثانیه؛ بین آن فقط وب، DNS و پینگ. توقف با Ctrl+C.")
+
         prev_report = None
-        # بارگذاری آخرین گزارش برای مقایسه اولیه در صورت وجود
         latest_file = os.path.join(args.output_dir, "latest.json")
         if os.path.exists(latest_file):
             try:
@@ -524,17 +604,27 @@ def main():
                     prev_report = json.load(f)
             except Exception:
                 prev_report = None
-                
+
         iter_count = 0
+        last_full_at = 0.0
         try:
             while True:
                 iter_count += 1
+                mode = "full" if (time.monotonic() - last_full_at) >= full_every or prev_report is None else "light"
                 print(f"\n{BOLD}{YELLOW}══════════════════════════════════════════════════════════════{RESET}")
-                print(f"{BOLD}{YELLOW}          دور پایش #{iter_count} — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}          {RESET}")
+                print(f"{BOLD}{YELLOW}          دور پایش #{iter_count} ({mode}) — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}          {RESET}")
                 print(f"{BOLD}{YELLOW}══════════════════════════════════════════════════════════════{RESET}")
-                
-                curr_report = run_suite_step(output_dir=args.output_dir, threads=args.threads, timeout=args.timeout)
-                
+
+                curr_report = run_suite_step(
+                    output_dir=args.output_dir,
+                    threads=args.threads,
+                    timeout=args.timeout,
+                    mode=mode,
+                    prev_report=prev_report,
+                )
+                if curr_report.get("probe_mode") == "full":
+                    last_full_at = time.monotonic()
+
                 if prev_report:
                     try:
                         from compare_reports import compare_reports, print_comparison
@@ -542,7 +632,7 @@ def main():
                         print_comparison(diff)
                     except Exception as e:
                         print(f"[!] خطا در مقایسه گزارش‌ها: {e}")
-                        
+
                 prev_report = curr_report
                 print(f"[⏳] در حال استراحت به مدت {interval} ثانیه تا آغاز دور بعدی پایش...")
                 time.sleep(interval)

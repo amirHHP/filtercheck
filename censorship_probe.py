@@ -11,12 +11,10 @@
 import socket
 import ssl
 import time
-import os
-import subprocess
-import json
-import urllib.request
 import urllib.parse
 import concurrent.futures
+
+import netutil
 
 # دامنه‌های تستی برای ارزیابی رفتاری UDP/QUIC در برابر TCP
 QUIC_TEST_TARGETS = [
@@ -56,56 +54,74 @@ def is_rfc1918_private_ip(ip_str):
     return False
 
 def resolve_domain_local(domain, timeout=2):
-    """رزولوشن دامنه از طریق DNS سیستم / محلی"""
-    try:
-        res = subprocess.run(
-            ['dig', '+time=1', '+tries=1', '+short', domain],
-            capture_output=True,
-            text=True,
-            timeout=timeout
-        )
-        out = res.stdout.strip()
-        if res.returncode == 0 and out:
-            ips = [line.strip() for line in out.split('\n') if line.strip() and not line.startswith(';')]
-            # فیلتر کردن رکوردهای CNAME و برداشتن اولین آی‌پی
-            valid_ips = [ip for ip in ips if any(c.isdigit() for c in ip.split('.'))]
-            return valid_ips
-    except Exception:
-        pass
-        
-    try:
-        infos = socket.getaddrinfo(domain, None, socket.AF_INET)
-        return list(set(item[4][0] for item in infos))
-    except Exception:
-        return []
+    """رزولوشن دامنه از DNS سیستم. نتیجه در طول دور کش می‌شود."""
+    return netutil.resolve_a(domain, timeout=timeout)
+
+
+DOH_TEMPLATES = (
+    "https://8.8.8.8/resolve?name={domain}&type=A",
+    "https://1.1.1.1/dns-query?name={domain}&type=A",
+    "https://1.0.0.1/dns-query?name={domain}&type=A",
+)
+
+
+def _sticky_doh_template(timeout):
+    """یک بار در هر دور اندپوینت زندهٔ DoH را انتخاب کن، نه برای هر دامنه."""
+    def choose():
+        def probe(template):
+            url = template.format(domain="google.com")
+            result = netutil.doh_lookup(url, timeout=timeout)
+            return template if result.get("ips") else None
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=len(DOH_TEMPLATES)) as executor:
+            futures = [executor.submit(probe, template) for template in DOH_TEMPLATES]
+            chosen = None
+            for future in concurrent.futures.as_completed(futures):
+                found = future.result()
+                if found and chosen is None:
+                    chosen = found
+            return chosen
+
+    return netutil.cached_call("doh-sticky-template", choose)
+
 
 def query_trusted_doh(domain, timeout=2.5):
-    """استعلام رکورد A دامنه از طریق DNS-over-HTTPS مطمئن (Google 8.8.8.8 یا Cloudflare)"""
-    endpoints = [
-        f"https://8.8.8.8/resolve?name={domain}&type=A",
-        f"https://1.1.1.1/dns-query?name={domain}&type=A",
-        f"https://1.0.0.1/dns-query?name={domain}&type=A"
-    ]
-    ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
+    """رکورد A از DoH. اندپوینت مرده برای دامنه‌های بعدی دوباره امتحان نمی‌شود."""
+    name = domain.strip(".").lower()
 
-    for ep in endpoints:
+    def load():
         try:
-            req = urllib.request.Request(
-                ep,
-                headers={"Accept": "application/dns-json", "User-Agent": "Mozilla/5.0"}
-            )
-            with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
-                if resp.getcode() == 200:
-                    payload = json.loads(resp.read().decode("utf-8"))
-                    answers = payload.get("Answer", [])
-                    ips = [a["data"].strip() for a in answers if a.get("type") == 1]
-                    if ips:
-                        return ips
+            ascii_name = name.encode("idna").decode("ascii")
         except Exception:
-            continue
-    return []
+            return []
+        template = _sticky_doh_template(min(timeout, 2.0))
+        if not template:
+            return []
+        url = template.format(domain=ascii_name)
+        return netutil.doh_lookup(url, timeout=timeout).get("ips") or []
+
+    return list(netutil.cached_call(("doh-a", name), load))
+
+# پیشوند حداقل /۱۶. پیشوند یک‌اکتتی بخش بزرگی از اینترنت را CDN جا می‌زند.
+_CDN_PREFIXES = (
+    "142.250.", "142.251.", "172.217.", "172.253.", "192.178.", "216.58.", "74.125.",
+    "104.16.", "104.17.", "104.18.", "104.19.", "104.20.", "104.21.", "104.22.",
+    "104.23.", "104.24.", "104.25.", "104.26.", "104.27.", "104.28.", "104.29.",
+    "104.30.", "104.31.",
+    "172.64.", "172.65.", "172.66.", "172.67.", "172.68.", "172.69.", "172.70.", "172.71.",
+    "162.159.", "188.114.",
+    "151.101.", "199.232.",
+)
+
+
+def _is_known_cdn_ip(ip):
+    return isinstance(ip, str) and ip.startswith(_CDN_PREFIXES)
+
+
+def both_on_known_cdn(local_ips, doh_ips):
+    """True فقط وقتی هر دو پاسخ روی پیشوند مشخص یک CDN شناخته‌شده باشند."""
+    return any(_is_known_cdn_ip(ip) for ip in local_ips) and any(_is_known_cdn_ip(ip) for ip in doh_ips)
+
 
 def detect_dns_poisoning(domain, timeout=2.0, check_doh=True):
     """
@@ -153,35 +169,23 @@ def detect_dns_poisoning(domain, timeout=2.0, check_doh=True):
 
     # حالت ۳: بررسی عدم تطابق فاحش آی‌پی محلی با پاسخ DoH مطمئن (DNS Divergence / Hijacking)
     if doh_ips and local_ips:
-        # شناسایی رنج‌های مشهور CDNهای جهانی
-        known_cdn_prefixes = (
-            '142.250.', '142.251.', '172.217.', '172.253.', '192.178.', '216.58.', '74.125.',  # Google
-            '104.', '172.64.', '172.65.', '172.66.', '172.67.', '172.68.', '172.69.', '172.70.', '172.71.', '162.159.', '188.114.',  # Cloudflare
-            '151.101.', '199.232.',  # Fastly
-            '23.', '104.', '184.', '2.', '96.',  # Akamai
-            '52.', '54.', '13.', '99.84.', '99.86.', '143.204.', '18.',  # AWS / CloudFront
-            '20.', '40.', '51.'  # Microsoft / Azure
-        )
-        local_is_cdn = any(ip.startswith(known_cdn_prefixes) for ip in local_ips)
-        doh_is_cdn = any(ip.startswith(known_cdn_prefixes) for ip in doh_ips)
-        
-        # اگر هر دو در رنج CDN هستند، این تفاوت ناشی از Anycast/GeoDNS طبیعی است نه آلودگی
-        if not (local_is_cdn and doh_is_cdn):
+        # اگر هر دو در رنج مشخص CDN هستند، تفاوت ناشی از Anycast/GeoDNS است نه آلودگی.
+        # پیشوندهای یک‌اکتتی (مثل 2. یا 104.) عمداً CDN حساب نمی‌شوند.
+        if not both_on_known_cdn(local_ips, doh_ips):
             local_subnets = {'.'.join(ip.split('.')[:2]) for ip in local_ips if '.' in ip}
             doh_subnets = {'.'.join(ip.split('.')[:2]) for ip in doh_ips if '.' in ip}
             if not (set(local_ips) & set(doh_ips)) and not (local_subnets & doh_subnets):
                 # اعتبارسنجی قطعی: تست اتصال TLS به آی‌پی محلی با نام دامنه مورد نظر
                 # اگر سرور گواهی معتبر تحویل دهد، قطعا سرور واقعی و GeoDNS است نه آلودگی
+                s_test = None
+                s_wrap = None
                 try:
                     s_test = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     s_test.settimeout(1.5)
-                    s_test.connect((local_ips[0], 443))
-                    c_test = ssl.create_default_context()
-                    c_test.check_hostname = False
-                    c_test.verify_mode = ssl.CERT_NONE
-                    s_wrap = c_test.wrap_socket(s_test, server_hostname=domain)
-                    cert = s_wrap.getpeercert(binary_form=True)
-                    s_wrap.close()
+                    with netutil.NetworkSlot():
+                        s_test.connect((local_ips[0], 443))
+                        s_wrap = netutil.ssl_context().wrap_socket(s_test, server_hostname=domain)
+                        cert = s_wrap.getpeercert(binary_form=True)
                     if cert:
                         return {
                             "poisoned": False,
@@ -193,6 +197,10 @@ def detect_dns_poisoning(domain, timeout=2.0, check_doh=True):
                         }
                 except Exception:
                     pass
+                finally:
+                    netutil.close_quietly(s_wrap)
+                    if s_wrap is None:
+                        netutil.close_quietly(s_test)
 
                 return {
                     "poisoned": True,
@@ -241,31 +249,34 @@ def probe_sni_vs_ip(domain, target_ip=None, port=443, timeout=3.0):
             "detail": f"آلودگی DNS: هدایت به آی‌پی جعلی {target_ip}"
         }
 
-    # ۱. تست اتصال TCP
-    tcp_ok = False
-    tcp_lat = None
-    tcp_error = None
-    t0 = time.time()
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(timeout)
-    try:
-        s.connect((target_ip, port))
-        tcp_lat = round((time.time() - t0) * 1000, 1)
-        tcp_ok = True
-        s.close()
-    except ConnectionResetError:
-        tcp_error = "TCP_RST"
-        s.close()
-    except (socket.timeout, TimeoutError):
-        tcp_error = "TCP_TIMEOUT"
-        s.close()
-    except Exception as e:
-        tcp_error = type(e).__name__
-        s.close()
+    def tls_attempt(server_hostname):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        wrapped = None
+        try:
+            sock.settimeout(timeout)
+            started = time.perf_counter()
+            with netutil.NetworkSlot():
+                sock.connect((target_ip, port))
+                wrapped = netutil.ssl_context().wrap_socket(sock, server_hostname=server_hostname)
+            return True, round((time.perf_counter() - started) * 1000, 1), None
+        except ssl.SSLEOFError:
+            return False, None, "TLS_SNI_RST_EOF"
+        except ConnectionResetError:
+            return False, None, "TLS_SNI_RST"
+        except (socket.timeout, TimeoutError):
+            return False, None, "TLS_SNI_TIMEOUT"
+        except Exception as exc:
+            return False, None, type(exc).__name__
+        finally:
+            netutil.close_quietly(wrapped)
+            if wrapped is None:
+                netutil.close_quietly(sock)
 
-    if not tcp_ok:
-        # اتصال TCP قبل از ارسال SNI شکست خورد (مسدودسازی مستقیم IP یا پورت)
-        if tcp_error == "TCP_RST":
+    # ۱. تست اتصال TCP. نتیجه برای آی‌پی‌های تکراری همین دور کش می‌شود.
+    tcp = netutil.probe_tcp(target_ip, port, timeout)
+    tcp_lat = tcp.get("latency_ms")
+    if not tcp["ok"]:
+        if tcp.get("error") == "reset":
             return {
                 "mechanism": "IP_BLOCKED_RST",
                 "tcp_ok": False,
@@ -273,43 +284,16 @@ def probe_sni_vs_ip(domain, target_ip=None, port=443, timeout=3.0):
                 "target_ip": target_ip,
                 "detail": f"مسدودسازی در لایه TCP با ارسال بلافاصله TCP RST به {target_ip}:{port}"
             }
-        else:
-            return {
-                "mechanism": "IP_BLOCKED_TIMEOUT",
-                "tcp_ok": False,
-                "tls_sni_ok": False,
-                "target_ip": target_ip,
-                "detail": f"دراپ خاموش / بلک‌هول پکت‌های TCP SYN به {target_ip}:{port} (تایم‌اوت)"
-            }
+        return {
+            "mechanism": "IP_BLOCKED_TIMEOUT",
+            "tcp_ok": False,
+            "tls_sni_ok": False,
+            "target_ip": target_ip,
+            "detail": f"دراپ خاموش / بلک‌هول پکت‌های TCP SYN به {target_ip}:{port} (تایم‌اوت)"
+        }
 
     # ۲. تست هندشیک TLS با ارسال SNI
-    tls_sni_ok = False
-    tls_sni_lat = None
-    tls_sni_error = None
-    t0 = time.time()
-    s_tls = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s_tls.settimeout(timeout)
-    try:
-        s_tls.connect((target_ip, port))
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-        ss = ctx.wrap_socket(s_tls, server_hostname=domain)
-        tls_sni_lat = round((time.time() - t0) * 1000, 1)
-        tls_sni_ok = True
-        ss.close()
-    except ssl.SSLEOFError:
-        tls_sni_error = "TLS_SNI_RST_EOF"
-        s_tls.close()
-    except ConnectionResetError:
-        tls_sni_error = "TLS_SNI_RST"
-        s_tls.close()
-    except (socket.timeout, TimeoutError):
-        tls_sni_error = "TLS_SNI_TIMEOUT"
-        s_tls.close()
-    except Exception as e:
-        tls_sni_error = type(e).__name__
-        s_tls.close()
+    tls_sni_ok, tls_sni_lat, tls_sni_error = tls_attempt(domain)
 
     if tls_sni_ok:
         return {
@@ -322,23 +306,8 @@ def probe_sni_vs_ip(domain, target_ip=None, port=443, timeout=3.0):
             "detail": f"اتصال امن TLS با موفقیت و بدون فیلترینگ SNI برقرار شد ({tls_sni_lat}ms)"
         }
 
-    # ۳. هندشیک با SNI شکست خورده است. اکنون تست بدون SNI را انجام می‌دهیم تا مطمئن شویم فیلترینگ روی SNI است
-    tls_nosni_ok = False
-    tls_nosni_error = None
-    s_nosni = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s_nosni.settimeout(timeout)
-    try:
-        s_nosni.connect((target_ip, port))
-        ctx2 = ssl.create_default_context()
-        ctx2.check_hostname = False
-        ctx2.verify_mode = ssl.CERT_NONE
-        # ارسال بدون server_hostname
-        ss2 = ctx2.wrap_socket(s_nosni, server_hostname=None)
-        tls_nosni_ok = True
-        ss2.close()
-    except Exception as e:
-        tls_nosni_error = type(e).__name__
-        s_nosni.close()
+    # ۳. هندشیک با SNI شکست خورده است. تست بدون SNI نشان می‌دهد فیلتر روی نام دامنه است یا نه.
+    tls_nosni_ok, _, _tls_nosni_error = tls_attempt(None)
 
     # ریشه‌یابی بر اساس تفکیک دقیق رفتار با و بدون SNI
     if tls_nosni_ok:
@@ -392,91 +361,56 @@ def probe_sni_vs_ip(domain, target_ip=None, port=443, timeout=3.0):
             }
 
 def make_rfc9000_quic_probe():
-    """
-    تولید پکت کاوش استاندارد QUIC Initial / Version Negotiation مطابق با بند ۱۴.۱ از RFC 9000
-    سایز پکت الزاماً باید حداقل ۱۲۰۰ بایت باشد، در غیر این صورت سرورهای استاندارد طبق مشخصات RFC آن را دراپ می‌کنند.
-    """
-    dcid = b'\x01\x02\x03\x04\x05\x06\x07\x08'
-    scid = b'\x11\x12\x13\x14\x15\x16\x17\x18'
-    # 0xc0 = Long Header (0x80) | Fixed Bit (0x40)
-    # نسخه 0x1a2a3a4a: نسخه نامعتبر جهت وادار کردن سرور استاندارد به پاسخ Version Negotiation
-    hdr = bytes([0xc0, 0x1a, 0x2a, 0x3a, 0x4a, len(dcid)]) + dcid + bytes([len(scid)]) + scid
-    return hdr + b'\x00' * (1200 - len(hdr))
+    """پکت QUIC Initial با طول ۱۲۰۰ بایت (RFC 9000)."""
+    return netutil.quic_initial_packet()
 
 def probe_udp_quic_single(host, port=443, timeout=2.5):
-    """
-    تست دسترسی به UDP/QUIC (HTTP/3) روی پورت ۴۴۳
-    ارسال پکت استاندارد کاوش QUIC Initial / Version Negotiation (RFC 9000)
-    """
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.settimeout(timeout)
-    
-    quic_probe = make_rfc9000_quic_probe()
-
-    t0 = time.time()
-    try:
-        ip = socket.gethostbyname(host)
-        s.sendto(quic_probe, (ip, port))
-        data, addr = s.recvfrom(2048)
-        dt = round((time.time() - t0) * 1000, 1)
-        s.close()
+    """UDP/QUIC روی پورت داده‌شده. نتیجه با بنچمارک پروتکل‌های UDP مشترک است."""
+    result = netutil.probe_udp_quic(host, port, timeout)
+    if result["error"] is None and result["ok"]:
         return {
             "ok": True,
             "status": "UDP_REACHABLE",
-            "latency_ms": dt,
-            "bytes_received": len(data),
-            "detail": f"پاسخ استاندارد UDP/QUIC دریافت شد ({len(data)} بایت, {dt}ms)"
+            "latency_ms": result["latency_ms"],
+            "bytes_received": result["bytes_received"],
+            "detail": f"پاسخ استاندارد UDP/QUIC دریافت شد ({result['bytes_received']} بایت, {result['latency_ms']}ms)"
         }
-    except socket.timeout:
-        s.close()
+    if result["error"] == "timeout":
         return {
             "ok": False,
             "status": "UDP_TIMEOUT_BLOCKED",
             "latency_ms": None,
             "detail": "تایم‌اوت UDP (مسدودسازی ترافیک UDP پورت ۴۴۳ / QUIC توسط فایروال)"
         }
-    except ConnectionRefusedError:
-        s.close()
+    if result["error"] == "refused":
         return {
             "ok": False,
             "status": "UDP_PORT_UNREACHABLE",
             "latency_ms": None,
             "detail": "دریافت خطای ICMP Port Unreachable (پورت پکت را نمی‌پذیرد)"
         }
-    except Exception as e:
-        s.close()
-        return {
-            "ok": False,
-            "status": "UDP_ERROR",
-            "latency_ms": None,
-            "detail": f"خطا در ارسال UDP ({type(e).__name__}: {str(e)[:30]})"
-        }
+    return {
+        "ok": False,
+        "status": "UDP_ERROR",
+        "latency_ms": None,
+        "detail": f"خطا در ارسال UDP ({result['error']})"
+    }
 
 def probe_tcp_port_single(host, port=443, timeout=2.5):
     """تست اتصال TCP متناظر برای مقایسه مستقیم رفتار TCP در برابر UDP"""
-    t0 = time.time()
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(timeout)
-    try:
-        ip = socket.gethostbyname(host)
-        s.connect((ip, port))
-        dt = round((time.time() - t0) * 1000, 1)
-        s.close()
+    result = netutil.probe_tcp(host, port, timeout)
+    if result["ok"]:
         return {
             "ok": True,
             "status": "TCP_CONNECTED",
-            "latency_ms": dt,
-            "detail": f"اتصال TCP در {dt}ms برقرار شد"
+            "latency_ms": result["latency_ms"],
+            "detail": f"اتصال TCP در {result['latency_ms']}ms برقرار شد"
         }
-    except ConnectionResetError:
-        s.close()
+    if result["error"] == "reset":
         return {"ok": False, "status": "TCP_RST", "latency_ms": None, "detail": "دریافت TCP RST"}
-    except (socket.timeout, TimeoutError):
-        s.close()
+    if result["error"] == "timeout":
         return {"ok": False, "status": "TCP_TIMEOUT", "latency_ms": None, "detail": "تایم‌اوت اتصال TCP"}
-    except Exception as e:
-        s.close()
-        return {"ok": False, "status": "TCP_ERROR", "latency_ms": None, "detail": str(e)[:30]}
+    return {"ok": False, "status": "TCP_ERROR", "latency_ms": None, "detail": str(result["error"])[:30]}
 
 def run_quic_vs_tcp_benchmark(targets=None, timeout=2.5):
     """
@@ -486,31 +420,29 @@ def run_quic_vs_tcp_benchmark(targets=None, timeout=2.5):
     if targets is None:
         targets = QUIC_TEST_TARGETS
 
-    def _probe_single_target(t):
-        host = t["host"]
-        port = t.get("port", 443)
-        name = t["name"]
-        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as sub_exec:
-            f_udp = sub_exec.submit(probe_udp_quic_single, host, port, timeout)
-            f_tcp = sub_exec.submit(probe_tcp_port_single, host, port, timeout)
-            udp_res = f_udp.result()
-            tcp_res = f_tcp.result()
-        return {
-            "name": name,
-            "host": host,
-            "port": port,
-            "udp_quic": udp_res,
-            "tcp": tcp_res
-        }
-
     results = []
     quic_working = 0
     tcp_working = 0
+    workers = max(1, len(targets) * 2)
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=len(targets)) as executor:
-        f_list = [executor.submit(_probe_single_target, t) for t in targets]
-        for f in concurrent.futures.as_completed(f_list):
-            res = f.result()
+    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+        jobs = []
+        for target in targets:
+            host = target["host"]
+            port = target.get("port", 443)
+            jobs.append((
+                target,
+                executor.submit(probe_udp_quic_single, host, port, timeout),
+                executor.submit(probe_tcp_port_single, host, port, timeout),
+            ))
+        for target, fut_udp, fut_tcp in jobs:
+            res = {
+                "name": target["name"],
+                "host": target["host"],
+                "port": target.get("port", 443),
+                "udp_quic": fut_udp.result(),
+                "tcp": fut_tcp.result(),
+            }
             results.append(res)
             if res["udp_quic"]["ok"]:
                 quic_working += 1

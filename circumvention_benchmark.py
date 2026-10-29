@@ -7,15 +7,12 @@
 - کاوش و ارزیابی آی‌پی‌های تمیز کلودفلر (Cloudflare Clean IPs Reachability) روی پورت ۴۴۳
 """
 
-import sys
 import os
 import time
 import socket
-import ssl
-import json
-import urllib.request
-import urllib.error
 import concurrent.futures
+
+import netutil
 
 # دامنه‌ها و اهداف شبیه‌سازی پروتکل Reality (VLESS-Reality)
 REALITY_TARGETS = [
@@ -71,19 +68,8 @@ CLOUDFLARE_CLEAN_IPS = [
     "172.65.251.78", "162.159.152.4"
 ]
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    "Accept": "application/dns-json"
-}
-
 def create_ssl_context():
-    try:
-        return ssl._create_unverified_context()
-    except Exception:
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-        return ctx
+    return netutil.ssl_context()
 
 # ----------------- ۱. تست پروتکل Reality و TLS 1.3 -----------------
 def probe_reality_endpoint(target, timeout=2.5):
@@ -93,15 +79,16 @@ def probe_reality_endpoint(target, timeout=2.5):
     sni = target["sni"]
     name = target["name"]
     
-    t0 = time.time()
+    t0 = time.perf_counter()
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(timeout)
+    ss = None
     try:
-        s.connect((host, port))
-        ctx = create_ssl_context()
-        ss = ctx.wrap_socket(s, server_hostname=sni)
-        dt = round((time.time() - t0) * 1000, 1)
-        ss.close()
+        s.settimeout(timeout)
+        with netutil.NetworkSlot():
+            s.connect((host, port))
+            netutil.note_tcp_open(host, port, round((time.perf_counter() - t0) * 1000, 1))
+            ss = create_ssl_context().wrap_socket(s, server_hostname=sni)
+        dt = round((time.perf_counter() - t0) * 1000, 1)
         return {
             "name": name,
             "protocol": "Reality (TLS 1.3)",
@@ -112,7 +99,6 @@ def probe_reality_endpoint(target, timeout=2.5):
             "detail": f"هندشیک امن Reality موفق ({dt}ms)"
         }
     except Exception as e:
-        s.close()
         err_name = type(e).__name__
         if "Timeout" in err_name or isinstance(e, socket.timeout):
             status = "REALITY_TIMEOUT_THROTTLED"
@@ -133,6 +119,10 @@ def probe_reality_endpoint(target, timeout=2.5):
             "status": status,
             "detail": detail
         }
+    finally:
+        netutil.close_quietly(ss)
+        if ss is None:
+            netutil.close_quietly(s)
 
 # ----------------- ۲. تست پروتکل V2Ray WebSocket -----------------
 def probe_v2ray_ws_endpoint(target, timeout=2.5):
@@ -142,30 +132,28 @@ def probe_v2ray_ws_endpoint(target, timeout=2.5):
     sni = target["sni"]
     name = target["name"]
     
-    t0 = time.time()
+    t0 = time.perf_counter()
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(timeout)
+    ss = None
     try:
-        s.connect((host, port))
-        ctx = create_ssl_context()
-        ss = ctx.wrap_socket(s, server_hostname=sni)
-        
-        # درخواست سوئیچ به پروتکل وب‌سوکت
-        ws_req = (
-            f"GET / HTTP/1.1\r\n"
-            f"Host: {sni}\r\n"
-            f"Upgrade: websocket\r\n"
-            f"Connection: Upgrade\r\n"
-            f"Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
-            f"Sec-WebSocket-Version: 13\r\n\r\n"
-        ).encode('utf-8')
-        
-        ss.sendall(ws_req)
-        resp = ss.recv(512)
-        dt = round((time.time() - t0) * 1000, 1)
-        ss.close()
-        
-        # اگر پاسخ HTTP برگشت، یعنی کانال وب‌سوکت باز است و مسدود نشده
+        s.settimeout(timeout)
+        with netutil.NetworkSlot():
+            s.connect((host, port))
+            netutil.note_tcp_open(host, port, round((time.perf_counter() - t0) * 1000, 1))
+            ss = create_ssl_context().wrap_socket(s, server_hostname=sni)
+
+            ws_req = (
+                f"GET / HTTP/1.1\r\n"
+                f"Host: {sni}\r\n"
+                f"Upgrade: websocket\r\n"
+                f"Connection: Upgrade\r\n"
+                f"Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+                f"Sec-WebSocket-Version: 13\r\n\r\n"
+            ).encode("utf-8")
+            ss.sendall(ws_req)
+            resp = ss.recv(512)
+        dt = round((time.perf_counter() - t0) * 1000, 1)
+
         ok = b"HTTP/1.1" in resp or b"HTTP/2" in resp
         return {
             "name": name,
@@ -177,7 +165,6 @@ def probe_v2ray_ws_endpoint(target, timeout=2.5):
             "detail": f"ارتباط وب‌سوکت برقرار شد ({dt}ms)" if ok else "پاسخ نامتعارف وب‌سوکت"
         }
     except Exception as e:
-        s.close()
         err_name = type(e).__name__
         return {
             "name": name,
@@ -188,6 +175,10 @@ def probe_v2ray_ws_endpoint(target, timeout=2.5):
             "status": "WS_BLOCKED",
             "detail": f"مسدودسازی در وب‌سوکت ({err_name})"
         }
+    finally:
+        netutil.close_quietly(ss)
+        if ss is None:
+            netutil.close_quietly(s)
 
 # ----------------- ۳. تست پروتکل Shadowsocks (AEAD) -----------------
 def probe_shadowsocks_endpoint(target, timeout=2.5):
@@ -203,39 +194,33 @@ def probe_shadowsocks_endpoint(target, timeout=2.5):
     salt = os.urandom(32)
     probe_payload = salt + os.urandom(16)
     
-    t0 = time.time()
+    t0 = time.perf_counter()
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(timeout)
     try:
-        s.connect((host, port))
-        s.sendall(probe_payload)
-        dt = round((time.time() - t0) * 1000, 1)
-        try:
-            s.settimeout(1.0)
-            data = s.recv(64)
-            s.close()
-            return {
-                "name": name,
-                "protocol": "Shadowsocks (AEAD)",
-                "host": f"{host}:{port}",
-                "ok": True,
-                "latency_ms": dt,
-                "status": "SS_OPEN",
-                "detail": f"اتصال شادوساکس برقرار و داده تبادل شد ({dt}ms)"
-            }
-        except socket.timeout:
-            s.close()
-            return {
-                "name": name,
-                "protocol": "Shadowsocks (AEAD)",
-                "host": f"{host}:{port}",
-                "ok": True,
-                "latency_ms": dt,
-                "status": "SS_ALIVE_NO_RST",
-                "detail": f"پورت باز و عدم تزریق RST پس از ارسال انتروپی ({dt}ms)"
-            }
+        s.settimeout(timeout)
+        with netutil.NetworkSlot():
+            s.connect((host, port))
+            netutil.note_tcp_open(host, port, round((time.perf_counter() - t0) * 1000, 1))
+            s.sendall(probe_payload)
+            dt = round((time.perf_counter() - t0) * 1000, 1)
+            try:
+                s.settimeout(1.0)
+                s.recv(64)
+                status = "SS_OPEN"
+                detail = f"اتصال شادوساکس برقرار و داده تبادل شد ({dt}ms)"
+            except socket.timeout:
+                status = "SS_ALIVE_NO_RST"
+                detail = f"پورت باز و عدم تزریق RST پس از ارسال انتروپی ({dt}ms)"
+        return {
+            "name": name,
+            "protocol": "Shadowsocks (AEAD)",
+            "host": f"{host}:{port}",
+            "ok": True,
+            "latency_ms": dt,
+            "status": status,
+            "detail": detail,
+        }
     except ConnectionResetError:
-        s.close()
         return {
             "name": name,
             "protocol": "Shadowsocks (AEAD)",
@@ -246,7 +231,6 @@ def probe_shadowsocks_endpoint(target, timeout=2.5):
             "detail": "تزریق TCP RST توسط فایروال DPI پس از مشاهده الگوی انتروپی"
         }
     except (socket.timeout, TimeoutError):
-        s.close()
         return {
             "name": name,
             "protocol": "Shadowsocks (AEAD)",
@@ -257,7 +241,6 @@ def probe_shadowsocks_endpoint(target, timeout=2.5):
             "detail": "تایم‌اوت اتصال به پورت شادوساکس (بلک‌هول یا دراپ فایروال)"
         }
     except ConnectionRefusedError:
-        s.close()
         return {
             "name": name,
             "protocol": "Shadowsocks (AEAD)",
@@ -268,7 +251,6 @@ def probe_shadowsocks_endpoint(target, timeout=2.5):
             "detail": "پورت بسته است (عدم مسدودسازی توسط فایروال؛ سرور در مقصد ریجکت کرد)"
         }
     except Exception as e:
-        s.close()
         return {
             "name": name,
             "protocol": "Shadowsocks (AEAD)",
@@ -278,53 +260,28 @@ def probe_shadowsocks_endpoint(target, timeout=2.5):
             "status": type(e).__name__,
             "detail": str(e)[:35]
         }
+    finally:
+        netutil.close_quietly(s)
 
 # ----------------- ۴. تست پروتکل‌های UDP (Hysteria2 / TUIC) -----------------
 def probe_udp_circumvention(target, timeout=2.5):
-    """ارسال پکت کاوش UDP (مطابق RFC 9000 با طول ۱۲۰۰ بایت) به پورت‌های Hysteria2 و TUIC و بررسی فیلترینگ UDP"""
+    """همان پروب QUIC بنچمارک HTTP/3. نتیجهٔ (میزبان، پورت) در یک دور تکرار نمی‌شود."""
     host = target["host"]
     port = target["port"]
     name = target["name"]
     proto = target["protocol"]
-    
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.settimeout(timeout)
-    
-    # پکت استاندارد کاوش QUIC / Hysteria2 با طول حداقل ۱۲۰۰ بایت (RFC 9000)
-    dcid = b'\x08\xaa\xbb\xcc\xdd\xee\xff\x11'
-    scid = b'\x08\x12\x34\x56\x78\x9a\xbc\xde'
-    hdr = bytes([0xc0, 0x1a, 0x2a, 0x3a, 0x4a, len(dcid)]) + dcid + bytes([len(scid)]) + scid
-    probe_packet = hdr + b'\x00' * (1200 - len(hdr))
-    
-    t0 = time.time()
-    try:
-        ip = socket.gethostbyname(host)
-        s.sendto(probe_packet, (ip, port))
-        data, _ = s.recvfrom(2048)
-        dt = round((time.time() - t0) * 1000, 1)
-        s.close()
+    result = netutil.probe_udp_quic(host, port, timeout)
+    if result["error"] is None and result["ok"]:
         return {
             "name": name,
             "protocol": proto,
             "host": f"{host}:{port}",
             "ok": True,
-            "latency_ms": dt,
+            "latency_ms": result["latency_ms"],
             "status": "UDP_OPEN",
-            "detail": f"پاسخ استاندارد UDP/QUIC دریافت شد ({len(data)} بایت, {dt}ms)"
+            "detail": f"پاسخ استاندارد UDP/QUIC دریافت شد ({result['bytes_received']} بایت, {result['latency_ms']}ms)"
         }
-    except socket.timeout:
-        s.close()
-        return {
-            "name": name,
-            "protocol": proto,
-            "host": f"{host}:{port}",
-            "ok": False,
-            "latency_ms": None,
-            "status": "UDP_DROPPED",
-            "detail": "تایم‌اوت UDP (مسدودسازی و بلک‌هول ترافیک UDP توسط فایروال)"
-        }
-    except ConnectionRefusedError:
-        s.close()
+    if result["error"] == "refused":
         return {
             "name": name,
             "protocol": proto,
@@ -334,61 +291,36 @@ def probe_udp_circumvention(target, timeout=2.5):
             "status": "UDP_REACHABLE_PORT_CLOSED",
             "detail": "عبور موفق پکت UDP از فایروال (دریافت خطای ICMP Port Unreachable از سرور)"
         }
-    except Exception as e:
-        s.close()
-        return {
-            "name": name,
-            "protocol": proto,
-            "host": f"{host}:{port}",
-            "ok": False,
-            "latency_ms": None,
-            "status": "UDP_ERROR",
-            "detail": str(e)[:30]
-        }
+    if result["error"] == "timeout":
+        detail = "تایم‌اوت UDP (مسدودسازی و بلک‌هول ترافیک UDP توسط فایروال)"
+        status = "UDP_DROPPED"
+    else:
+        detail = str(result["error"])[:30]
+        status = "UDP_ERROR"
+    return {
+        "name": name,
+        "protocol": proto,
+        "host": f"{host}:{port}",
+        "ok": False,
+        "latency_ms": None,
+        "status": status,
+        "detail": detail,
+    }
 
 # ----------------- ۴. تست DNS-over-HTTPS (DoH) -----------------
 def probe_doh_endpoint(target, timeout=3.0):
     name = target["name"]
     url = target["url"]
-    ctx = create_ssl_context()
-    
-    t0 = time.time()
-    req = urllib.request.Request(url, headers=HEADERS)
-    try:
-        with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
-            dt = round((time.time() - t0) * 1000, 1)
-            code = resp.getcode()
-            ok = (code == 200)
-            return {
-                "name": name,
-                "type": "DoH",
-                "endpoint": url.split('?')[0],
-                "ok": ok,
-                "latency_ms": dt,
-                "status": "DOH_ACCESSIBLE" if ok else f"HTTP_{code}",
-                "detail": f"پاسخ معتبر DoH دریافت شد ({dt}ms)"
-            }
-    except Exception as e:
-        err_msg = str(e)
-        if "timed out" in err_msg.lower():
-            status = "DOH_TIMEOUT"
-            detail = "تایم‌اوت استعلام DoH (فیلترینگ و دراپ پکت‌ها)"
-        elif "refused" in err_msg.lower():
-            status = "DOH_REFUSED"
-            detail = "رد اتصال DoH"
-        else:
-            status = type(e).__name__
-            detail = f"عدم امکان اتصال به DoH ({status})"
-            
-        return {
-            "name": name,
-            "type": "DoH",
-            "endpoint": url.split('?')[0],
-            "ok": False,
-            "latency_ms": None,
-            "status": status,
-            "detail": detail
-        }
+    result = netutil.doh_lookup(url, timeout=timeout)
+    return {
+        "name": name,
+        "type": "DoH",
+        "endpoint": url.split("?")[0],
+        "ok": result["ok"],
+        "latency_ms": result["latency_ms"],
+        "status": result["status"],
+        "detail": result["detail"],
+    }
 
 # ----------------- ۵. تست DNS-over-TLS (DoT port 853) -----------------
 def probe_dot_endpoint(target, timeout=3.0):
@@ -397,15 +329,15 @@ def probe_dot_endpoint(target, timeout=3.0):
     port = target.get("port", 853)
     sni = target.get("sni")
     
-    t0 = time.time()
+    t0 = time.perf_counter()
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(timeout)
+    ss = None
     try:
-        s.connect((ip, port))
-        ctx = create_ssl_context()
-        ss = ctx.wrap_socket(s, server_hostname=sni)
-        dt = round((time.time() - t0) * 1000, 1)
-        ss.close()
+        s.settimeout(timeout)
+        with netutil.NetworkSlot():
+            s.connect((ip, port))
+            ss = create_ssl_context().wrap_socket(s, server_hostname=sni)
+        dt = round((time.perf_counter() - t0) * 1000, 1)
         return {
             "name": name,
             "type": "DoT",
@@ -416,7 +348,6 @@ def probe_dot_endpoint(target, timeout=3.0):
             "detail": f"اتصال امن DoT روی پورت ۸۵۳ برقرار شد ({dt}ms)"
         }
     except Exception as e:
-        s.close()
         err_name = type(e).__name__
         if "Timeout" in err_name or isinstance(e, socket.timeout):
             status = "DOT_TIMEOUT"
@@ -437,20 +368,18 @@ def probe_dot_endpoint(target, timeout=3.0):
             "status": status,
             "detail": detail
         }
+    finally:
+        netutil.close_quietly(ss)
+        if ss is None:
+            netutil.close_quietly(s)
 
 # ----------------- ۶. کاوش آی‌پی‌های تمیز کلودفلر (Clean IPs) -----------------
 def probe_single_clean_ip(ip, port=443, timeout=2.0):
-    t0 = time.time()
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(timeout)
-    try:
-        s.connect((ip, port))
-        dt = round((time.time() - t0) * 1000, 1)
-        s.close()
-        return {"ip": ip, "port": port, "ok": True, "latency_ms": dt, "status": "OPEN"}
-    except Exception as e:
-        s.close()
-        return {"ip": ip, "port": port, "ok": False, "latency_ms": None, "status": type(e).__name__}
+    result = netutil.probe_tcp(ip, port, timeout)
+    if result["ok"]:
+        return {"ip": ip, "port": port, "ok": True, "latency_ms": result["latency_ms"], "status": "OPEN"}
+    status = "timeout" if result["error"] == "timeout" else ("ConnectionResetError" if result["error"] == "reset" else str(result["error"]))
+    return {"ip": ip, "port": port, "ok": False, "latency_ms": None, "status": status}
 
 def check_cloudflare_clean_ips(candidates=None, timeout=2.0, threads=15):
     """

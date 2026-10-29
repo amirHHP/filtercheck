@@ -2,6 +2,8 @@
 import socket
 import ssl
 import time
+
+import netutil
 import urllib.request
 import urllib.error
 import concurrent.futures
@@ -39,13 +41,7 @@ if sys.platform == 'win32':
         GREEN = RED = YELLOW = BLUE = MAGENTA = CYAN = RESET = BOLD = ""
 
 def create_ssl_context():
-    try:
-        return ssl._create_unverified_context()
-    except AttributeError:
-        context = ssl.create_default_context()
-        context.check_hostname = False
-        context.verify_mode = ssl.CERT_NONE
-        return context
+    return netutil.ssl_context()
 
 # GitHub raw URLs (including public proxy list and V2Ray subscription lists)
 LIST_URLS = {

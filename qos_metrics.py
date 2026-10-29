@@ -8,14 +8,13 @@
 """
 
 import sys
-import os
 import re
 import time
 import subprocess
 import urllib.request
-import urllib.error
-import ssl
 import concurrent.futures
+
+import netutil
 
 DOMESTIC_PING_TARGETS = [
     {"name": "آپارات (Aparat)", "host": "aparat.com"},
@@ -31,32 +30,32 @@ INTERNATIONAL_PING_TARGETS = [
     {"name": "Wikimedia Global CDN", "host": "wikimedia.org"}
 ]
 
+# یک نمونهٔ ۲ مگابایتی، نه صفحهٔ HTML. دانلودها پشت‌سرهم‌اند تا Mbps بین جریان‌ها تقسیم نشود.
+WARMUP_BYTES = 256 * 1024
+MEASURE_BYTES = 2 * 1024 * 1024
+MIN_MEASURED_BYTES = 256 * 1024
+SPEED_SAMPLE_BYTES = WARMUP_BYTES + MEASURE_BYTES
+
 SPEED_DOMESTIC_TARGETS = [
-    {"name": "ورزش سه (Varzesh3 CDN)", "url": "https://www.varzesh3.com/"},
-    {"name": "ابر ستون (Sotoon Cloud)", "url": "https://sotoon.ir/"},
-    {"name": "کافه بازار (Bazaar CDN)", "url": "https://cafebazaar.ir/"},
-    {"name": "ابر آروان (ArvanCloud CDN)", "url": "https://arvancloud.ir/"},
-    {"name": "آسیاتک (Asiatech CDN)", "url": "https://asiatech.ir/"}
+    {"name": "شاتل (فایل معیار)", "url": "http://speedtest.shatel.ir/speedtest/random4000x4000.jpg"},
+    {"name": "مخابرات (فایل معیار)", "url": "http://speedtest.tci.ir/speedtest/random4000x4000.jpg"},
+    {"name": "آروان (آینه اوبونتو)", "url": "https://mirror.arvancloud.ir/ubuntu-releases/24.04.1/ubuntu-24.04.1-desktop-amd64.iso"},
 ]
 
 SPEED_INTERNATIONAL_TARGETS = [
-    {"name": "Cloudflare Speed (500KB)", "url": "https://speed.cloudflare.com/__down?bytes=500000"},
-    {"name": "Wikimedia Global CDN (220KB)", "url": "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"},
-    {"name": "AWS CloudFront Static", "url": "https://d1.awsstatic.com/logos/aws-logo-lockups/poweredbyaws/PB_AWS_logo_RGB_stacked_REV_SQ.png"}
+    {"name": "Cloudflare (۲ مگابایت)", "url": f"https://speed.cloudflare.com/__down?bytes={SPEED_SAMPLE_BYTES}"},
 ]
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 }
 
-def create_ssl_context():
-    try:
-        return ssl._create_unverified_context()
-    except Exception:
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-        return ctx
+def bytes_to_mbps(num_bytes, seconds):
+    """مگابیت بر ثانیه از روی بایت و مدت. مدت صفر یعنی نمونه‌ای در دست نیست."""
+    if not seconds or seconds <= 0 or not num_bytes:
+        return 0.0
+    return round((num_bytes * 8) / (seconds * 1_000_000), 2)
+
 
 def probe_ping_target(target, count=4, timeout=4.0):
     """
@@ -196,100 +195,130 @@ def measure_ping_and_jitter(count=4, timeout=4.0, threads=8):
         "international": intl_summary
     }
 
-def probe_download_speed(target, timeout=6.0):
+def _sample_result(name, url, ok, measured, elapsed, error):
+    size_kb = round(measured / 1024, 1) if measured else 0.0
+    speed_mbps = bytes_to_mbps(measured, elapsed) if ok else 0.0
+    speed_kb_s = round(size_kb / elapsed, 1) if ok and elapsed else 0.0
+    return {
+        "name": name,
+        "url": url,
+        "ok": ok,
+        "size_kb": size_kb,
+        "duration_seconds": round(elapsed, 2) if elapsed else 0.0,
+        "speed_kb_s": speed_kb_s,
+        "speed_mbps": speed_mbps,
+        "error": error,
+    }
+
+
+def probe_download_speed(target, timeout=20.0):
     """
-    دانلود فایل نمونه از نقطه CDN و محاسبه سرعت دریافت بر حسب KB/s و Mbps
+    ۲۵۶ کیلوبایت اول دور ریخته می‌شود (گرم‌کردن همان اتصال).
+    سرعت از ۲ مگابایت بعدی همان سوکت حساب می‌شود، نه از صفحهٔ HTML.
     """
     name = target["name"]
     url = target["url"]
-    ctx = create_ssl_context()
-    
-    req = urllib.request.Request(url, headers=HEADERS)
-    t0 = time.time()
+    headers = dict(HEADERS)
+    headers["Range"] = f"bytes=0-{SPEED_SAMPLE_BYTES - 1}"
+    req = urllib.request.Request(url, headers=headers)
+    response = None
+    wall = time.perf_counter()
     try:
-        with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
-            data = resp.read()
-            dt = time.time() - t0
-            size_bytes = len(data)
-            size_kb = round(size_bytes / 1024, 1)
-            
-            if dt > 0:
-                speed_kb_s = round(size_kb / dt, 1)
-                speed_mbps = round((size_bytes * 8) / (dt * 1_000_000), 2)
-            else:
-                speed_kb_s = 0.0
-                speed_mbps = 0.0
-                
-            return {
-                "name": name,
-                "url": url,
-                "ok": True,
-                "size_kb": size_kb,
-                "duration_seconds": round(dt, 2),
-                "speed_kb_s": speed_kb_s,
-                "speed_mbps": speed_mbps,
-                "error": None
-            }
-    except Exception as e:
-        dt = time.time() - t0
-        err_msg = str(e)
-        if "timed out" in err_msg.lower():
+        with netutil.NetworkSlot():
+            response = urllib.request.urlopen(req, timeout=timeout, context=netutil.ssl_context())
+            warmup_left = WARMUP_BYTES
+            measured = 0
+            started = None
+            try:
+                while measured < MEASURE_BYTES:
+                    if time.perf_counter() - wall > timeout:
+                        break
+                    if warmup_left:
+                        chunk = response.read(min(65536, warmup_left))
+                    else:
+                        chunk = response.read(min(65536, MEASURE_BYTES - measured))
+                    if not chunk:
+                        break
+                    if warmup_left:
+                        if len(chunk) < warmup_left:
+                            warmup_left -= len(chunk)
+                            continue
+                        spill = chunk[warmup_left:]
+                        warmup_left = 0
+                        started = time.perf_counter()
+                        measured += len(spill)
+                        continue
+                    if started is None:
+                        started = time.perf_counter()
+                    measured += len(chunk)
+            except Exception:
+                if measured < MIN_MEASURED_BYTES:
+                    raise
+            elapsed = (time.perf_counter() - started) if started else 0.0
+        ok = measured >= MIN_MEASURED_BYTES and elapsed > 0
+        return _sample_result(name, url, ok, measured, elapsed, None if ok else "SHORT_SAMPLE")
+    except Exception as exc:
+        message = str(exc).lower()
+        if "timed out" in message or "timeout" in message:
             err_type = "TIMEOUT_THROTTLED"
-        elif "reset" in err_msg.lower() or "eof" in err_msg.lower():
+        elif "reset" in message or "eof" in message:
             err_type = "RST_BLOCKED"
         else:
-            err_type = type(e).__name__
-            
-        return {
-            "name": name,
-            "url": url,
-            "ok": False,
-            "size_kb": 0.0,
-            "duration_seconds": round(dt, 2),
-            "speed_kb_s": 0.0,
-            "speed_mbps": 0.0,
-            "error": err_type
-        }
+            err_type = type(exc).__name__
+        return _sample_result(name, url, False, 0, time.perf_counter() - wall, err_type)
+    finally:
+        netutil.close_quietly(response)
 
-def measure_bandwidth_throttling(timeout=6.0, threads=6):
+
+def _first_speed_sample(targets, timeout):
+    """اولین فایلی که به‌اندازهٔ کافی بایت بدهد. بقیه فقط وقتی قبلی ناکافی باشد امتحان می‌شوند."""
+    attempts = []
+    for target in targets:
+        result = probe_download_speed(target, timeout=timeout)
+        attempts.append(result)
+        if result["ok"]:
+            break
+    return attempts
+
+
+def _chosen_mbps(attempts):
+    good = [item["speed_mbps"] for item in attempts if item["ok"]]
+    return good[0] if good else 0.0
+
+
+def measure_bandwidth_throttling(timeout=20.0, threads=1):
     """
-    بررسی تراتلینگ پهنای باند با مقایسه سرعت دانلود از CDNهای بین‌المللی در برابر CDNهای داخلی
+    مقایسهٔ یک دانلود داخلی با یک دانلود خارجی، پشت‌سرهم.
+    threads نادیده گرفته می‌شود؛ دانلود همزمان عدد Mbps را تقسیم می‌کند.
     """
-    targets = [("domestic", t) for t in SPEED_DOMESTIC_TARGETS] + [("international", t) for t in SPEED_INTERNATIONAL_TARGETS]
-    domestic_results = []
-    intl_results = []
-    
-    with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
-        f_map = {executor.submit(probe_download_speed, t, timeout): (scope, t) for scope, t in targets}
-        for f in concurrent.futures.as_completed(f_map):
-            scope, _ = f_map[f]
-            res = f.result()
-            if scope == "domestic":
-                domestic_results.append(res)
-            else:
-                intl_results.append(res)
-                
-    d_speeds = [r["speed_mbps"] for r in domestic_results if r["ok"]]
-    i_speeds = [r["speed_mbps"] for r in intl_results if r["ok"]]
-    
-    avg_d_speed = round(sum(d_speeds) / len(d_speeds), 2) if d_speeds else 0.0
-    avg_i_speed = round(sum(i_speeds) / len(i_speeds), 2) if i_speeds else 0.0
-    
-    # ارزیابی تراتلینگ
-    i_success_count = sum(1 for r in intl_results if r["ok"])
-    
-    if i_success_count == 0 or (avg_d_speed > 5.0 and avg_i_speed < 0.8):
+    del threads
+    domestic_results = _first_speed_sample(SPEED_DOMESTIC_TARGETS, timeout)
+    intl_results = _first_speed_sample(SPEED_INTERNATIONAL_TARGETS, timeout)
+    avg_d_speed = _chosen_mbps(domestic_results)
+    avg_i_speed = _chosen_mbps(intl_results)
+    d_ok = any(item["ok"] for item in domestic_results)
+    i_ok = any(item["ok"] for item in intl_results)
+
+    if d_ok and not i_ok:
         throttling_status = "HEAVY_THROTTLING_DETECTED"
         throttling_badge = "🔴 محدودسازی و تراتلینگ شدید پهنای باند بین‌الملل (Intl Speed Throttled)"
-        throttling_summary = f"ترافیک CDNهای خارجی به شدت خفه شده است (میانگین بین‌الملل: {avg_i_speed} Mbps در برابر داخلی: {avg_d_speed} Mbps)."
+        throttling_summary = f"دانلود معیار خارجی کامل نشد. داخلی: {avg_d_speed} Mbps."
+    elif not d_ok or not i_ok:
+        throttling_status = "INCONCLUSIVE"
+        throttling_badge = "⚫ سنجش سرعت کامل نشد"
+        throttling_summary = "فایل معیار داخلی یا خارجی به‌اندازهٔ کافی دریافت نشد؛ مقایسهٔ تراتلینگ ممکن نیست."
+    elif avg_d_speed > 5.0 and avg_i_speed < 0.8:
+        throttling_status = "HEAVY_THROTTLING_DETECTED"
+        throttling_badge = "🔴 محدودسازی و تراتلینگ شدید پهنای باند بین‌الملل (Intl Speed Throttled)"
+        throttling_summary = f"ترافیک CDN خارجی خفه شده است (بین‌الملل: {avg_i_speed} Mbps در برابر داخلی: {avg_d_speed} Mbps)."
     elif avg_i_speed < 2.0 and avg_d_speed >= 8.0:
         throttling_status = "MODERATE_THROTTLING"
         throttling_badge = "🟡 تراتلینگ محسوس سرعت ارتباطات خارجی (Noticeable Throttling)"
-        throttling_summary = f"سرعت CDNهای خارجی محدودتر از توان خط است (بین‌الملل: {avg_i_speed} Mbps | داخلی: {avg_d_speed} Mbps)."
+        throttling_summary = f"سرعت CDN خارجی محدودتر از توان خط است (بین‌الملل: {avg_i_speed} Mbps | داخلی: {avg_d_speed} Mbps)."
     else:
         throttling_status = "NORMAL_SPEED"
         throttling_badge = "🟢 سرعت تبادل اطلاعات مناسب و بدون تراتلینگ حاد"
-        throttling_summary = f"سرعت بین‌الملل ({avg_i_speed} Mbps) در تناسب قابل قبولی با ترافیک داخلی است."
+        throttling_summary = f"سرعت بین‌الملل ({avg_i_speed} Mbps) در تناسب قابل قبولی با ترافیک داخلی ({avg_d_speed} Mbps) است."
 
     return {
         "status": throttling_status,
@@ -297,8 +326,8 @@ def measure_bandwidth_throttling(timeout=6.0, threads=6):
         "summary": throttling_summary,
         "domestic_avg_mbps": avg_d_speed,
         "international_avg_mbps": avg_i_speed,
-        "domestic": sorted(domestic_results, key=lambda x: (not x["ok"], -x["speed_mbps"])),
-        "international": sorted(intl_results, key=lambda x: (not x["ok"], -x["speed_mbps"]))
+        "domestic": domestic_results,
+        "international": intl_results,
     }
 
 def run_traceroute_hop_inspection(target="1.1.1.1", max_hops=14, timeout=16):
@@ -465,39 +494,40 @@ def run_traceroute_hop_inspection(target="1.1.1.1", max_hops=14, timeout=16):
         "hops": hops
     }
 
-def run_qos_benchmark(ping_count=4, speed_timeout=6.0, traceroute_target="1.1.1.1"):
+def run_qos_benchmark(ping_count=10, speed_timeout=20.0, traceroute_target="1.1.1.1", include_speed=True):
     """
-    اجرای یکپارچه کلیه تست‌های کیفیت، افت پکت، جیتر، سرعت و تحلیل هاپ‌های روتینگ
+    پینگ و traceroute همزمان‌اند. تست سرعت بعد از آن‌هاست تا لوله را اشغال نکند.
+    include_speed=False برای وقتی است که سرعت را ارکستراتور، جدا از بقیهٔ پروب‌ها اجرا می‌کند.
     """
     start = time.time()
-    
-    # ۱. پینگ و جیتر
-    ping_res = measure_ping_and_jitter(count=ping_count, timeout=4.0)
-    
-    # ۲. سرعت و تراتلینگ
-    speed_res = measure_bandwidth_throttling(timeout=speed_timeout)
-    
-    # ۳. تریس روت و تحلیل هاپ‌ها
-    trace_res = run_traceroute_hop_inspection(target=traceroute_target, max_hops=14, timeout=8)
-    
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        ping_future = executor.submit(measure_ping_and_jitter, ping_count, 4.0)
+        trace_future = executor.submit(
+            run_traceroute_hop_inspection, traceroute_target, 14, 12
+        )
+        ping_res = ping_future.result()
+        trace_res = trace_future.result()
+
+    speed_res = measure_bandwidth_throttling(timeout=speed_timeout) if include_speed else None
     elapsed = round(time.time() - start, 2)
-    
-    return {
+    result = {
         "elapsed_seconds": elapsed,
         "stability": ping_res,
-        "throttling": speed_res,
-        "traceroute": trace_res
+        "traceroute": trace_res,
     }
+    if speed_res is not None:
+        result["throttling"] = speed_res
+    return result
 
 if __name__ == "__main__":
     print("──▶ تست پینگ، پکت‌لاس و جیتر:")
-    p = measure_ping_and_jitter(count=3)
+    p = measure_ping_and_jitter(count=10)
     print(f"وضعیت خط: {p['stability_badge']}")
     print(f"داخلی -> تاخیر: {p['domestic']['avg_latency_ms']}ms | جیتر: {p['domestic']['avg_jitter_ms']}ms | لاس: {p['domestic']['avg_packet_loss_pct']}%")
     print(f"خارجی -> تاخیر: {p['international']['avg_latency_ms']}ms | جیتر: {p['international']['avg_jitter_ms']}ms | لاس: {p['international']['avg_packet_loss_pct']}%")
     
     print("\n──▶ تست سنجش سرعت و تراتلینگ پهنای باند:")
-    s = measure_bandwidth_throttling(timeout=5.0)
+    s = measure_bandwidth_throttling(timeout=20.0)
     print(f"وضعیت تراتلینگ: {s['badge']}")
     print(f"سرعت داخلی: {s['domestic_avg_mbps']} Mbps | سرعت خارجی: {s['international_avg_mbps']} Mbps")
     

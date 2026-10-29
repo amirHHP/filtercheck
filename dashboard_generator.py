@@ -18,6 +18,8 @@ def generate_html_dashboard(report_data, output_path="reports/dashboard.html"):
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
     timestamp = report_data.get("timestamp", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    if report_data.get("probe_mode") == "light":
+        timestamp = f"{timestamp} • دور سبک (سرعت، traceroute و ریشه‌یابی از آخرین دور کامل)"
     health = report_data.get("health", {})
     health_score = health.get("score", 0)
     health_badge = health.get("badge", "نامشخص")
